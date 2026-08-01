@@ -69,7 +69,7 @@ pnpm generate-data
 pnpm check
 ```
 
-`pnpm check` rejects JavaScript source files, typechecks the tooling and packages, builds every package, verifies the preserved public API, then runs the test suites.
+`pnpm check` rejects non-TypeScript maintained source, typechecks the tooling and packages, builds every package, verifies the preserved public API, then runs the test suites.
 
 ## Documentation
 
