@@ -1,9 +1,14 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { fileURLToPath } from 'node:url';
+import { defineConfig } from 'vite';
 
-// https://vitejs.dev/config/
+const entry = fileURLToPath(new URL('./src/main.ts', import.meta.url));
+
 export default defineConfig({
-  plugins: [react()],
-  // No special configuration needed for @countrystatecity/countries!
-  // The import.meta.glob approach works out of the box
-})
+  build: {
+    lib: {
+      entry,
+      formats: ['es'],
+      fileName: 'index',
+    },
+  },
+});

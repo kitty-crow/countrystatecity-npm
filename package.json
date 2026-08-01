@@ -13,9 +13,15 @@
     "lint": "turbo run lint",
     "clean": "turbo run clean && rm -rf node_modules",
     "typecheck:scripts": "tsc -p scripts/tsconfig.json --noEmit",
-    "check:no-js": "tsx scripts/check-no-js.ts",
-    "check": "pnpm check:no-js && pnpm typecheck:scripts && pnpm typecheck && pnpm build && pnpm check:api && pnpm test",
-    "check:api": "tsx scripts/check-api.ts"
+    "check:languages": "tsx scripts/check-languages.ts",
+    "check:no-js": "pnpm check:languages",
+    "check": "pnpm check:languages && pnpm typecheck:scripts && pnpm typecheck && pnpm build && pnpm check:api && pnpm test",
+    "check:api": "tsx scripts/check-api.ts",
+    "test:integration": "pnpm test:integration:countries:next && pnpm test:integration:countries:vite && pnpm test:integration:timezones:next && pnpm test:integration:translations:next",
+    "test:integration:countries:next": "tsx scripts/test-integration.ts packages/countries/tests/nextjs-integration packages/countries 'countries with Next.js'",
+    "test:integration:countries:vite": "tsx scripts/test-integration.ts packages/countries/tests/vite-integration packages/countries 'countries with Vite'",
+    "test:integration:timezones:next": "tsx scripts/test-integration.ts packages/timezones/tests/nextjs-integration packages/timezones 'timezones with Next.js'",
+    "test:integration:translations:next": "tsx scripts/test-integration.ts packages/translations/tests/nextjs-integration packages/translations 'translations with Next.js'"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
