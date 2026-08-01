@@ -1,6 +1,7 @@
 import axios, { AxiosError } from 'axios';
 import chalk from 'chalk';
-import { getApiKey, getApiBase } from './config.js';
+import { getApiBase, getApiKey } from './config.ts';
+import { USER_AGENT } from '../version.ts';
 
 export interface UsageInfo {
   dailyUsed: number;
@@ -14,105 +15,74 @@ interface ApiResponse<T> {
   usage: UsageInfo | null;
 }
 
-/**
- * Extracts usage stats from API response headers.
- * Returns null if any of the four required headers are missing.
- */
-function extractUsage(headers: Record<string, string>): UsageInfo | null {
-  const dailyUsed = headers['x-csc-daily-used'];
-  const dailyLimit = headers['x-csc-daily-limit'];
-  const monthlyUsed = headers['x-csc-monthly-used'];
-  const monthlyLimit = headers['x-csc-monthly-limit'];
+type Headers = Record<string, string | number | undefined>;
 
-  if (!dailyUsed || !dailyLimit || !monthlyUsed || !monthlyLimit) {
-    return null;
-  }
+function readHeader(headers: Headers, name: string): string | undefined {
+  const value = headers[name];
+  return value === undefined ? undefined : String(value);
+}
+
+/** Extracts usage stats when all quota headers are present. */
+function extractUsage(headers: Headers): UsageInfo | null {
+  const dailyUsed = readHeader(headers, 'x-csc-daily-used');
+  const dailyLimit = readHeader(headers, 'x-csc-daily-limit');
+  const monthlyUsed = readHeader(headers, 'x-csc-monthly-used');
+  const monthlyLimit = readHeader(headers, 'x-csc-monthly-limit');
+  if (!dailyUsed || !dailyLimit || !monthlyUsed || !monthlyLimit) return null;
 
   return {
-    dailyUsed: parseInt(dailyUsed, 10),
-    dailyLimit: parseInt(dailyLimit, 10),
-    monthlyUsed: parseInt(monthlyUsed, 10),
-    monthlyLimit: parseInt(monthlyLimit, 10),
+    dailyUsed: Number.parseInt(dailyUsed, 10),
+    dailyLimit: Number.parseInt(dailyLimit, 10),
+    monthlyUsed: Number.parseInt(monthlyUsed, 10),
+    monthlyLimit: Number.parseInt(monthlyLimit, 10),
   };
 }
 
-/**
- * Makes an authenticated GET request to the CSC API.
- * Handles common error codes with actionable messages.
- */
-export async function get<T>(path: string): Promise<ApiResponse<T>> {
-  const apiKey = getApiKey();
-  if (!apiKey) {
-    console.error(chalk.red('Not authenticated.'));
-    console.error(chalk.dim('Run `csc auth login` to set your API key.'));
-    process.exit(1);
+function exit(message: string, hint?: string): never {
+  console.error(chalk.red(message));
+  if (hint) console.error(chalk.dim(hint));
+  process.exit(1);
+}
+
+function handleError(error: unknown): never {
+  if (!(error instanceof AxiosError)) {
+    return exit('Cannot reach API. Check your internet connection.');
   }
 
-  const baseUrl = getApiBase();
+  const status = error.response?.status;
+  if (status === 401) return exit('Invalid or missing API key.', 'Run `csc auth login` to set your key.');
+  if (status === 403) return exit('Access denied — this endpoint requires a higher plan.', 'Run `csc upgrade` to view available plans.');
+  if (status === 429) {
+    console.error(chalk.red('Daily limit reached.'));
+    console.error(chalk.yellow('Run `csc upgrade` to increase your limits.'));
+    process.exit(1);
+  }
+  if (status === 404) return exit('Not found.');
+  return exit(`API error: ${error.message}`);
+}
+
+/** Makes an authenticated GET request to the CSC API. */
+export async function get<T>(path: string): Promise<ApiResponse<T>> {
+  const apiKey = getApiKey();
+  if (!apiKey) return exit('Not authenticated.', 'Run `csc auth login` to set your API key.');
 
   try {
-    const response = await axios.get<T>(`${baseUrl}${path}`, {
-      headers: {
-        'X-CSCAPI-KEY': apiKey,
-        'User-Agent': '@countrystatecity/cli/0.1.1',
-      },
+    const res = await axios.get<T>(`${getApiBase()}${path}`, {
+      headers: { 'X-CSCAPI-KEY': apiKey, 'User-Agent': USER_AGENT },
     });
-
-    const usage = extractUsage(response.headers as Record<string, string>);
-    return { data: response.data, usage };
+    return { data: res.data, usage: extractUsage(res.headers as Headers) };
   } catch (error) {
-    if (error instanceof AxiosError) {
-      const status = error.response?.status;
-
-      if (status === 401) {
-        console.error(chalk.red('Invalid or missing API key.'));
-        console.error(chalk.dim('Run `csc auth login` to set your key.'));
-        process.exit(1);
-      }
-
-      if (status === 403) {
-        console.error(chalk.red('Access denied — this endpoint requires a higher plan.'));
-        console.error(chalk.dim('Run `csc upgrade` to view available plans.'));
-        process.exit(1);
-      }
-
-      if (status === 429) {
-        console.error(chalk.red('Daily limit reached.'));
-        console.error(chalk.yellow('Run `csc upgrade` to increase your limits.'));
-        process.exit(1);
-      }
-
-      if (status === 404) {
-        console.error(chalk.red('Not found.'));
-        process.exit(1);
-      }
-
-      console.error(chalk.red(`API error: ${error.message}`));
-      process.exit(1);
-    }
-
-    console.error(chalk.red('Cannot reach API. Check your internet connection.'));
-    process.exit(1);
+    return handleError(error);
   }
 }
 
-/**
- * Validates an API key by making a lightweight test request.
- * Returns usage info on success, null on failure.
- */
+/** Validates an API key with a lightweight request. */
 export async function validateKey(apiKey: string): Promise<{ valid: boolean; usage: UsageInfo | null }> {
-  const baseUrl = getApiBase();
-
   try {
-    const response = await axios.get(`${baseUrl}/countries/IN`, {
-      headers: {
-        'X-CSCAPI-KEY': apiKey,
-        'User-Agent': '@countrystatecity/cli/0.1.1',
-      },
+    const res = await axios.get(`${getApiBase()}/countries/IN`, {
+      headers: { 'X-CSCAPI-KEY': apiKey, 'User-Agent': USER_AGENT },
     });
-
-    const usage = extractUsage(response.headers as Record<string, string>);
-    return { valid: true, usage };
+    return { valid: true, usage: extractUsage(res.headers as Headers) };
   } catch {
     return { valid: false, usage: null };
   }

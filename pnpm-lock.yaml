@@ -17,6 +17,9 @@ importers:
       turbo:
         specifier: ^2.9.14
         version: 2.9.18
+      tsx:
+        specifier: ~4.21.1
+        version: 4.21.1
       typescript:
         specifier: ^5.5.4
         version: 5.9.3
@@ -87,6 +90,9 @@ importers:
       tsup:
         specifier: ^8.5.1
         version: 8.5.1(postcss@8.5.15)(tsx@4.21.1)(typescript@5.9.3)
+      tsx:
+        specifier: ~4.21.1
+        version: 4.21.1
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -102,6 +108,9 @@ importers:
       tsup:
         specifier: ^8.5.1
         version: 8.5.1(postcss@8.5.15)(tsx@4.21.1)(typescript@5.9.3)
+      tsx:
+        specifier: ~4.21.1
+        version: 4.21.1
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -117,6 +126,9 @@ importers:
       tsup:
         specifier: ^8.5.0
         version: 8.5.1(postcss@8.5.15)(tsx@4.21.1)(typescript@5.9.3)
+      tsx:
+        specifier: ~4.21.1
+        version: 4.21.1
       typescript:
         specifier: ^5.9.0
         version: 5.9.3
@@ -132,6 +144,9 @@ importers:
       tsup:
         specifier: ^8.5.1
         version: 8.5.1(postcss@8.5.15)(tsx@4.21.1)(typescript@5.9.3)
+      tsx:
+        specifier: ~4.21.1
+        version: 4.21.1
       typescript:
         specifier: ^5.9.0
         version: 5.9.3
@@ -150,6 +165,9 @@ importers:
       tsup:
         specifier: ^8.5.1
         version: 8.5.1(postcss@8.5.15)(tsx@4.21.1)(typescript@5.9.3)
+      tsx:
+        specifier: ~4.21.1
+        version: 4.21.1
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -165,6 +183,9 @@ importers:
       tsup:
         specifier: ^8.5.0
         version: 8.5.1(postcss@8.5.15)(tsx@4.21.1)(typescript@5.9.3)
+      tsx:
+        specifier: ~4.21.1
+        version: 4.21.1
       typescript:
         specifier: ^5.9.0
         version: 5.9.3

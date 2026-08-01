@@ -11,7 +11,7 @@ vi.mock('chalk', () => ({
   },
 }));
 
-import { getAsciiArt, getBrandedHelp } from '../../src/lib/branding.js';
+import { getAsciiArt, getBrandedHelp } from '../../src/lib/branding.ts';
 
 describe('getAsciiArt', () => {
   it('contains block characters from the ASCII art rows', () => {
@@ -21,7 +21,7 @@ describe('getAsciiArt', () => {
 
   it('contains the version string', () => {
     const art = getAsciiArt();
-    expect(art).toContain('v0.1.1');
+    expect(art).toContain('v2.0.0');
   });
 
   it('contains the subtitle text', () => {

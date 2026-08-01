@@ -1,13 +1,13 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
-vi.mock('../../src/lib/config.js', () => ({
+vi.mock('../../src/lib/config.ts', () => ({
   getApiKey: vi.fn(),
   setApiKey: vi.fn(),
   clearApiKey: vi.fn(),
   getApiBase: vi.fn(() => 'https://api.countrystatecity.in/v1'),
 }));
 
-vi.mock('../../src/lib/api.js', () => ({
+vi.mock('../../src/lib/api.ts', () => ({
   validateKey: vi.fn(),
 }));
 
@@ -32,9 +32,9 @@ vi.mock('chalk', () => ({
 }));
 
 import { Command } from 'commander';
-import { registerAuthCommands } from '../../src/commands/auth.js';
-import { getApiKey, setApiKey, clearApiKey } from '../../src/lib/config.js';
-import { validateKey } from '../../src/lib/api.js';
+import { registerAuthCommands } from '../../src/commands/auth.ts';
+import { getApiKey, setApiKey, clearApiKey } from '../../src/lib/config.ts';
+import { validateKey } from '../../src/lib/api.ts';
 
 describe('auth commands', () => {
   let program: Command;

@@ -1,11 +1,12 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 import open from 'open';
-import { getApiKey } from '../lib/config.js';
-import { validateKey } from '../lib/api.js';
-import { getTierName, printUsageFooter } from '../lib/usage-footer.js';
-import { printTable } from '../lib/display.js';
-import { createSpinner, type GlobalFlags } from '../lib/output.js';
+import { getApiKey } from '../lib/config.ts';
+import { validateKey } from '../lib/api.ts';
+import { getTierName, printUsageFooter } from '../lib/usage-footer.ts';
+import { printTable } from '../lib/display.ts';
+import { createSpinner } from '../lib/output.ts';
+import { getFlags } from '../lib/flags.ts';
 
 /** Plan definitions for the upgrade table and JSON output. */
 const PLANS = [
@@ -24,12 +25,7 @@ export function registerUpgradeCommand(program: Command): void {
     .command('upgrade')
     .description('View plans and open pricing page')
     .action(async (_options: Record<string, unknown>, cmd: Command) => {
-      const globalOpts = cmd.optsWithGlobals();
-      const flags: GlobalFlags = {
-        json: globalOpts.json ?? false,
-        quiet: globalOpts.quiet ?? false,
-        noFooter: globalOpts.footer === false,
-      };
+      const flags = getFlags(cmd);
 
       let usage = null;
       let currentPlan: string | undefined;
@@ -47,7 +43,7 @@ export function registerUpgradeCommand(program: Command): void {
 
       if (flags.json) {
         const output: Record<string, unknown> = { plans: PLANS };
-        if (currentPlan) output.currentPlan = currentPlan;
+        if (currentPlan) output['currentPlan'] = currentPlan;
         process.stdout.write(JSON.stringify(output) + '\n');
         return;
       }

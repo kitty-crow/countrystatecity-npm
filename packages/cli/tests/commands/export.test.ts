@@ -6,7 +6,7 @@ vi.mock('chalk', () => ({
 }));
 
 import { Command } from 'commander';
-import { registerExportCommand } from '../../src/commands/export.js';
+import { registerExportCommand } from '../../src/commands/export.ts';
 import open from 'open';
 
 describe('export command', () => {

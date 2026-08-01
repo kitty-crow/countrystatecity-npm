@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
-vi.mock('../../src/lib/api.js', () => ({
+vi.mock('../../src/lib/api.ts', () => ({
   get: vi.fn(),
 }));
 
-vi.mock('../../src/lib/config.js', () => ({
+vi.mock('../../src/lib/config.ts', () => ({
   getApiKey: vi.fn(() => 'test-key'),
   getApiBase: vi.fn(() => 'https://api.countrystatecity.in/v1'),
 }));
@@ -37,8 +37,8 @@ vi.mock('cli-table3', () => ({
 }));
 
 import { Command } from 'commander';
-import { registerGetCommands } from '../../src/commands/get.js';
-import { get } from '../../src/lib/api.js';
+import { registerGetCommands } from '../../src/commands/get.ts';
+import { get } from '../../src/lib/api.ts';
 
 const mockCountryDetail = {
   id: 101,

@@ -1,17 +1,21 @@
 {
   "name": "countrystatecity-monorepo",
   "private": true,
-  "version": "0.0.0",
+  "version": "2.0.0",
   "scripts": {
     "build": "turbo run build",
     "test": "turbo run test",
     "typecheck": "turbo run typecheck",
     "dev": "turbo run dev",
-    "fetch-database": "node scripts/fetch-database.cjs",
-    "generate-data": "node scripts/generate-all.cjs",
+    "fetch-database": "tsx scripts/fetch-database.ts",
+    "generate-data": "tsx scripts/generate-all.ts",
     "update-data": "pnpm fetch-database && pnpm generate-data && pnpm build",
     "lint": "turbo run lint",
-    "clean": "turbo run clean && rm -rf node_modules"
+    "clean": "turbo run clean && rm -rf node_modules",
+    "typecheck:scripts": "tsc -p scripts/tsconfig.json --noEmit",
+    "check:no-js": "tsx scripts/check-no-js.ts",
+    "check": "pnpm check:no-js && pnpm typecheck:scripts && pnpm typecheck && pnpm build && pnpm check:api && pnpm test",
+    "check:api": "tsx scripts/check-api.ts"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
@@ -19,11 +23,13 @@
     "typescript": "^5.5.4",
     "tsup": "^8.2.4",
     "vite": "^6.0.0",
-    "vitest": "^4.1.8"
+    "vitest": "^4.1.8",
+    "tsx": "~4.21.1"
   },
   "engines": {
     "node": ">=18",
     "pnpm": ">=9"
   },
-  "packageManager": "pnpm@9.0.0"
+  "packageManager": "pnpm@9.0.0",
+  "type": "module"
 }

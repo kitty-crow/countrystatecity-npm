@@ -24,7 +24,7 @@ vi.mock('conf', () => {
   };
 });
 
-import { getApiKey, setApiKey, clearApiKey, getApiBase, isAuthenticated } from '../../src/lib/config.js';
+import { getApiKey, setApiKey, clearApiKey, getApiBase, isAuthenticated } from '../../src/lib/config.ts';
 import Conf from 'conf';
 
 describe('config', () => {

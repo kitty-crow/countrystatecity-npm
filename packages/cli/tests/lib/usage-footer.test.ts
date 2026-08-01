@@ -9,7 +9,7 @@ vi.mock('chalk', () => ({
   },
 }));
 
-import { printUsageFooter, progressBar, getTierName, formatNumber } from '../../src/lib/usage-footer.js';
+import { printUsageFooter, progressBar, getTierName, formatNumber } from '../../src/lib/usage-footer.ts';
 
 describe('usage-footer', () => {
   afterEach(() => {

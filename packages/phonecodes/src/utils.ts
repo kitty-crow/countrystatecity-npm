@@ -1,4 +1,4 @@
-import { getPhonecodeByCountry } from './loaders.js';
+import { getPhonecodeByCountry } from './loaders.ts';
 
 /** Returns the dial code string for a country ISO2 (e.g. "IN" → "+91"), or undefined. */
 export async function getDialCode(iso2: string): Promise<string | undefined> {
@@ -15,7 +15,7 @@ export async function getPhonecode(iso2: string): Promise<string | undefined> {
  * e.g. formatWithDialCode("9876543210", "IN") → "+91 9876543210"
  */
 export async function formatWithDialCode(localNumber: string, iso2: string): Promise<string> {
-  const entry = await getPhonecodeByCountry(iso2);
-  if (!entry) return localNumber;
-  return `${entry.dialCode} ${localNumber}`;
+  const item = await getPhonecodeByCountry(iso2);
+  if (!item) return localNumber;
+  return `${item.dialCode} ${localNumber}`;
 }

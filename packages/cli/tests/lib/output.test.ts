@@ -23,8 +23,8 @@ vi.mock('ora', () => ({
   })),
 }));
 
-import { stderr, createSpinner, isTTY } from '../../src/lib/output.js';
-import type { GlobalFlags } from '../../src/lib/output.js';
+import { stderr, createSpinner, isTTY } from '../../src/lib/output.ts';
+import type { GlobalFlags } from '../../src/lib/output.ts';
 
 // ---------------------------------------------------------------------------
 // Helpers

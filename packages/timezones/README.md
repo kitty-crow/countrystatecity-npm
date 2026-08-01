@@ -1,7 +1,7 @@
 # @countrystatecity/timezones
 
 [![npm](https://img.shields.io/npm/v/@countrystatecity/timezones)](https://www.npmjs.com/package/@countrystatecity/timezones)
-[![CI](https://github.com/dr5hn/countrystatecity-npm/workflows/Pipeline/badge.svg)](https://github.com/dr5hn/countrystatecity-npm/actions/workflows/ci.yml)
+[![CI](https://github.com/kitty-crow/countrystatecity-npm/workflows/Pipeline/badge.svg)](https://github.com/kitty-crow/countrystatecity-npm/actions/workflows/ci.yml)
 [![npm downloads](https://img.shields.io/npm/dm/@countrystatecity/timezones?label=timezones)](https://www.npmjs.com/package/@countrystatecity/timezones)
 [![npm downloads](https://img.shields.io/npm/dw/@countrystatecity/timezones?label=timezones)](https://www.npmjs.com/package/@countrystatecity/timezones)
 
@@ -440,7 +440,7 @@ Contributions are welcome! Please open an issue or PR.
 
 ## 📦 Package Ecosystem
 
-This package is part of the [@countrystatecity package ecosystem](https://github.com/dr5hn/countrystatecity-npm):
+This package is part of the [@countrystatecity package ecosystem](https://github.com/kitty-crow/countrystatecity-npm):
 
 - **[@countrystatecity/countries](https://www.npmjs.com/package/@countrystatecity/countries)** — Server-side countries, states, and cities database. Environment: Node.js, Next.js API routes, Express. Bundle: <10KB initial load.
 
@@ -450,7 +450,7 @@ This package is part of the [@countrystatecity package ecosystem](https://github
 
 ## 🔗 Links
 
-- [GitHub Repository](https://github.com/dr5hn/countrystatecity-npm/tree/main/packages/timezones)
-- [Issues](https://github.com/dr5hn/countrystatecity-npm/issues)
+- [GitHub Repository](https://github.com/kitty-crow/countrystatecity-npm/tree/main/packages/timezones)
+- [Issues](https://github.com/kitty-crow/countrystatecity-npm/issues)
 - [NPM Package](https://www.npmjs.com/package/@countrystatecity/timezones)
 - [NPM Organization](https://www.npmjs.com/org/countrystatecity)

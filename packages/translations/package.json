@@ -1,7 +1,7 @@
 {
   "name": "@countrystatecity/translations",
-  "version": "1.0.2",
-  "description": "Country name translations in 19 languages — Arabic, German, French, Spanish, and more",
+  "version": "2.0.0",
+  "description": "Country name translations in 19 languages \u2014 Arabic, German, French, Spanish, and more",
   "keywords": [
     "country-state-city",
     "translations",
@@ -16,11 +16,11 @@
   "license": "ODbL-1.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dr5hn/countrystatecity-npm.git"
+    "url": "git+https://github.com/kitty-crow/countrystatecity-npm.git"
   },
-  "homepage": "https://github.com/dr5hn/countrystatecity-npm/tree/main/packages/translations#readme",
+  "homepage": "https://github.com/kitty-crow/countrystatecity-npm/tree/main/packages/translations#readme",
   "bugs": {
-    "url": "https://github.com/dr5hn/countrystatecity-npm/issues"
+    "url": "https://github.com/kitty-crow/countrystatecity-npm/issues"
   },
   "type": "module",
   "main": "./dist/index.cjs",
@@ -50,13 +50,14 @@
     "test:watch": "vitest",
     "test:compat": "vitest run compatibility",
     "typecheck": "tsc --noEmit",
-    "generate-data": "node scripts/generate-data.cjs"
+    "generate-data": "tsx scripts/generate-data.ts"
   },
   "devDependencies": {
     "@types/node": "^20.19.0",
     "tsup": "^8.5.0",
     "typescript": "^5.9.0",
-    "vitest": "^4.1.8"
+    "vitest": "^4.1.8",
+    "tsx": "~4.21.1"
   },
   "publishConfig": {
     "access": "public"

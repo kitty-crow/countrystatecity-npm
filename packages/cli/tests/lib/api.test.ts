@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 // Mock config
-vi.mock('../../src/lib/config.js', () => ({
+vi.mock('../../src/lib/config.ts', () => ({
   getApiKey: vi.fn(() => 'test-api-key'),
   getApiBase: vi.fn(() => 'https://api.countrystatecity.in/v1'),
 }));
@@ -30,8 +30,8 @@ vi.mock('chalk', () => ({
 }));
 
 import axios, { AxiosError } from 'axios';
-import { get, validateKey } from '../../src/lib/api.js';
-import { getApiKey } from '../../src/lib/config.js';
+import { get, validateKey } from '../../src/lib/api.ts';
+import { getApiKey } from '../../src/lib/config.ts';
 
 describe('api client', () => {
   beforeEach(() => {

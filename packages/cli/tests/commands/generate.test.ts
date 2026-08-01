@@ -3,11 +3,11 @@ import { mkdtemp, readFile, rm } from 'fs/promises';
 import { tmpdir } from 'os';
 import { join } from 'path';
 
-vi.mock('../../src/lib/api.js', () => ({
+vi.mock('../../src/lib/api.ts', () => ({
   get: vi.fn(),
 }));
 
-vi.mock('../../src/lib/config.js', () => ({
+vi.mock('../../src/lib/config.ts', () => ({
   getApiKey: vi.fn(() => 'test-key'),
   getApiBase: vi.fn(() => 'https://api.countrystatecity.in/v1'),
 }));
@@ -34,8 +34,8 @@ vi.mock('chalk', () => ({
 }));
 
 import { Command } from 'commander';
-import { registerGenerateCommands } from '../../src/commands/generate.js';
-import { get } from '../../src/lib/api.js';
+import { registerGenerateCommands } from '../../src/commands/generate.ts';
+import { get } from '../../src/lib/api.ts';
 
 const mockCountries = [
   { id: 101, name: 'India', iso2: 'IN', iso3: 'IND', phonecode: '91', capital: 'New Delhi', currency: 'INR', emoji: '🇮🇳' },

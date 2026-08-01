@@ -2,8 +2,8 @@
  * Fetch wrapper for @countrystatecity/countries-browser
  */
 
-import { getConfig } from './config';
-import { NetworkError, TimeoutError } from './errors';
+import { getConfig } from './config.ts';
+import { NetworkError, TimeoutError } from './errors.ts';
 
 /**
  * Fetch a JSON resource from the configured CDN
@@ -12,35 +12,20 @@ import { NetworkError, TimeoutError } from './errors';
  * @throws NetworkError on non-2xx response
  */
 export async function fetchJSON<T>(path: string): Promise<T> {
-  const config = getConfig();
-  const url = `${config.baseURL}${path}`;
-
-  let response: Response;
+  const cfg = getConfig();
+  const url = `${cfg.baseURL}${path}`;
+  let res: Response;
   try {
-    response = await fetch(url, {
-      signal: AbortSignal.timeout(config.timeout),
-      headers: {
-        'Accept': 'application/json',
-        ...config.headers,
-      },
+    res = await fetch(url, {
+      signal: AbortSignal.timeout(cfg.timeout),
+      headers: { Accept: 'application/json', ...cfg.headers },
     });
-  } catch (error) {
-    if (error instanceof DOMException && error.name === 'TimeoutError') {
-      throw new TimeoutError(
-        `Request timed out after ${config.timeout}ms: ${path}`,
-        config.timeout,
-      );
+  } catch (err) {
+    if (err instanceof DOMException && err.name === 'TimeoutError') {
+      throw new TimeoutError(`Request timed out after ${cfg.timeout}ms: ${path}`, cfg.timeout);
     }
-    throw error;
+    throw err;
   }
-
-  if (!response.ok) {
-    throw new NetworkError(
-      `Failed to load ${path}: ${response.statusText}`,
-      url,
-      response.status,
-    );
-  }
-
-  return response.json() as Promise<T>;
+  if (!res.ok) throw new NetworkError(`Failed to load ${path}: ${res.statusText}`, url, res.status);
+  return res.json() as Promise<T>;
 }

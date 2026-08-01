@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
-vi.mock('../../src/lib/config.js', () => ({
+vi.mock('../../src/lib/config.ts', () => ({
   getApiKey: vi.fn(),
   getApiBase: vi.fn(() => 'https://api.countrystatecity.in/v1'),
 }));
 
-vi.mock('../../src/lib/api.js', () => ({
+vi.mock('../../src/lib/api.ts', () => ({
   validateKey: vi.fn(),
 }));
 
@@ -32,9 +32,9 @@ vi.mock('cli-table3', () => ({
 }));
 
 import { Command } from 'commander';
-import { registerUpgradeCommand } from '../../src/commands/upgrade.js';
-import { getApiKey } from '../../src/lib/config.js';
-import { validateKey } from '../../src/lib/api.js';
+import { registerUpgradeCommand } from '../../src/commands/upgrade.ts';
+import { getApiKey } from '../../src/lib/config.ts';
+import { validateKey } from '../../src/lib/api.ts';
 import open from 'open';
 
 describe('upgrade command', () => {

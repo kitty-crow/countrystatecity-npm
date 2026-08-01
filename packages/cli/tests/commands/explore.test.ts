@@ -12,11 +12,11 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 // Module mocks — must be declared before any imports that pull them in
 // ---------------------------------------------------------------------------
 
-vi.mock('../../src/lib/api.js', () => ({
+vi.mock('../../src/lib/api.ts', () => ({
   get: vi.fn(),
 }));
 
-vi.mock('../../src/lib/config.js', () => ({
+vi.mock('../../src/lib/config.ts', () => ({
   getApiKey: vi.fn(() => 'test-key'),
   getApiBase: vi.fn(() => 'https://api.countrystatecity.in/v1'),
 }));
@@ -64,8 +64,8 @@ vi.mock('cli-table3', () => ({
 // ---------------------------------------------------------------------------
 
 import { Command } from 'commander';
-import { registerExploreCommand } from '../../src/commands/explore.js';
-import { get } from '../../src/lib/api.js';
+import { registerExploreCommand } from '../../src/commands/explore.ts';
+import { get } from '../../src/lib/api.ts';
 import searchPrompt from '@inquirer/search';
 import selectPrompt from '@inquirer/select';
 
@@ -167,7 +167,7 @@ describe('explore command', () => {
         throw new Error(`process.exit(${code})`);
       });
 
-      const { get } = await import('../../src/lib/api.js');
+      const { get } = await import('../../src/lib/api.ts');
 
       try {
         await expect(

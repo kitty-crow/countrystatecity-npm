@@ -35,41 +35,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Bump patch versions
-        id: bump
-        run: |
-          node -e "
-            const fs = require('fs');
-            const packages = ['countries', 'countries-browser', 'timezones', 'currencies', 'translations', 'phonecodes'];
-            for (const pkg of packages) {
-              const path = \`packages/\${pkg}/package.json\`;
-              const json = JSON.parse(fs.readFileSync(path, 'utf-8'));
-              const [major, minor, patch] = json.version.split('.').map(Number);
-              const oldVersion = json.version;
-              json.version = \`\${major}.\${minor}.\${patch + 1}\`;
-              fs.writeFileSync(path, JSON.stringify(json, null, 2) + '\n');
-              console.log(\`\${json.name}: \${oldVersion} → \${json.version}\`);
-            }
-          "
-
-      - name: Update CHANGELOGs
-        run: |
-          DATE=$(date +%Y-%m-%d)
-          for pkg in countries countries-browser timezones currencies translations phonecodes; do
-            VERSION=$(node -p "require('./packages/$pkg/package.json').version")
-            NAME=$(node -p "require('./packages/$pkg/package.json').name")
-            CHANGELOG="packages/$pkg/CHANGELOG.md"
-            ENTRY="## $VERSION\n\n### Patch Changes\n\n- Updated data from countries-states-cities-database\n\n"
-            if [ -f "$CHANGELOG" ]; then
-              TMP=$(mktemp)
-              head -1 "$CHANGELOG" > "$TMP"
-              printf "\n$ENTRY" >> "$TMP"
-              tail -n +2 "$CHANGELOG" >> "$TMP"
-              mv "$TMP" "$CHANGELOG"
-            else
-              printf "# $NAME\n\n$ENTRY" > "$CHANGELOG"
-            fi
-          done
+      - name: Bump versions and changelogs
+        run: pnpm exec tsx scripts/release-data.ts
 
       - name: Commit and push
         run: |

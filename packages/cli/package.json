@@ -1,6 +1,6 @@
 {
   "name": "@countrystatecity/cli",
-  "version": "0.1.7",
+  "version": "2.0.0",
   "description": "Official CLI for the Country State City API - search, explore, and generate code from geographic data",
   "files": [
     "dist",
@@ -19,7 +19,8 @@
     "dev": "tsx src/index.ts",
     "test": "vitest",
     "lint": "eslint src/",
-    "prepublishOnly": "pnpm run build"
+    "prepublishOnly": "pnpm run build",
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [
     "country",
@@ -36,13 +37,13 @@
   ],
   "author": "dr5hn",
   "license": "MIT",
-  "homepage": "https://github.com/dr5hn/countrystatecity-npm/tree/main/packages/cli#readme",
+  "homepage": "https://github.com/kitty-crow/countrystatecity-npm/tree/main/packages/cli#readme",
   "bugs": {
-    "url": "https://github.com/dr5hn/countrystatecity-npm/issues"
+    "url": "https://github.com/kitty-crow/countrystatecity-npm/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dr5hn/countrystatecity-npm.git"
+    "url": "git+https://github.com/kitty-crow/countrystatecity-npm.git"
   },
   "publishConfig": {
     "access": "public"

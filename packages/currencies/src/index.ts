@@ -1,4 +1,4 @@
-export type { ICurrency } from './types.js';
+export type { ICurrency } from './types.ts';
 
 export {
   getCurrencies,
@@ -6,13 +6,13 @@ export {
   getCurrenciesByCountry,
   isValidCurrencyCode,
   searchCurrencies,
-} from './loaders.js';
+} from './loaders.ts';
 
 export {
   getCurrencySymbol,
   getCurrencySymbolNative,
   getCurrencyBySymbol,
   formatCurrencyAmount,
-} from './utils.js';
+} from './utils.ts';
 
-export { getCurrencies as default } from './loaders.js';
+export { getCurrencies as default } from './loaders.ts';
