@@ -16,18 +16,18 @@ jobs:
           node-version: '24'
           cache: npm
           cache-dependency-path: package-lock.json
-      - name: Install without deprecation warnings
+      - name: Install without policy or deprecation warnings
         run: |
           set -o pipefail
           npm ci 2>&1 | tee /tmp/npm-ci.log
-          if grep -Ei 'npm warn deprecated|DeprecationWarning' /tmp/npm-ci.log; then
-            echo 'Deprecated dependencies or runtime APIs were reported.' >&2
+          if grep -Ei 'npm warn deprecated|DeprecationWarning|npm warn allow-scripts' /tmp/npm-ci.log; then
+            echo 'An unreviewed install script, deprecated dependency or deprecated runtime API was reported.' >&2
             exit 1
           fi
       - run: npm audit --audit-level=low
       - run: npm audit --omit=dev --audit-level=low
       - run: npm run check:deprecations
-      - run: npm run check:runtime:ts-node
+      - run: NODE_OPTIONS=--throw-deprecation npm run check:runtime:ts-node
 
   bun:
     runs-on: ubuntu-latest
