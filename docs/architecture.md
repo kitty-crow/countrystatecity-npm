@@ -1,6 +1,6 @@
 # Architecture
 
-The repository is a pnpm and Turborepo workspace. Each published package owns one public entry module and a small set of internal responsibilities.
+The repository uses npm workspaces and Turborepo. Each published package owns one public entry module and a small set of internal responsibilities.
 
 ```text
 source database
@@ -28,3 +28,7 @@ Shared repository tooling lives under `scripts/`. It validates the upstream data
 ## Public boundary
 
 Public names are intentionally descriptive and stable. Short names are used only for local implementation details. Package manifests retain the original ESM, CommonJS, declaration and data export paths.
+
+## Runtime and dependency policy
+
+npm workspaces are canonical. Repository TypeScript is also validated through `ts-node` and Bun. CLI networking, configuration, terminal presentation and browser launching use native platform APIs; public commands, arguments, output shapes and package entry points remain unchanged.

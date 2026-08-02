@@ -2,62 +2,40 @@ name: Dependency and deprecation audit
 
 on:
   push:
-    branches: [agent/dependency-deprecation-cleanup]
+    branches: [main]
   pull_request:
     branches: [main]
 
 jobs:
-  audit:
+  npm:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-
       - uses: actions/setup-node@v6
         with:
           node-version: '24'
-          package-manager-cache: false
-
-      - name: Inventory native replacement candidates
-        run: |
-          echo '=== imports ==='
-          grep -RInE --include='*.ts' "from '(axios|conf|open|chalk|ora|cli-table3)'" packages/cli/src packages/cli/tests || true
-          echo '=== chalk methods ==='
-          grep -RhoE --include='*.ts' 'chalk\.[A-Za-z]+' packages/cli/src packages/cli/tests | sort -u || true
-          echo '=== ora usage ==='
-          grep -RInE --include='*.ts' '(ora\(|Ora|spinner\.)' packages/cli/src packages/cli/tests || true
-          echo '=== table usage ==='
-          grep -RInE --include='*.ts' '(Table\(|cli-table3|printTable)' packages/cli/src packages/cli/tests || true
-
-      - name: Install pnpm
-        run: npm install --global pnpm@9.15.9
-
-      - name: Install dependencies and capture warnings
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Install without deprecation warnings
         run: |
           set -o pipefail
-          pnpm install --frozen-lockfile 2>&1 | tee /tmp/install.log
-          if grep -Ei '(deprecated|deprecationwarning)' /tmp/install.log; then
-            echo '::warning::Install-time deprecations were reported'
-          else
-            echo 'No install-time deprecations reported'
+          npm ci 2>&1 | tee /tmp/npm-ci.log
+          if grep -Ei 'npm warn deprecated|DeprecationWarning' /tmp/npm-ci.log; then
+            echo 'Deprecated dependencies or runtime APIs were reported.' >&2
+            exit 1
           fi
+      - run: npm audit --audit-level=low
+      - run: npm audit --omit=dev --audit-level=low
+      - run: npm run check:deprecations
+      - run: npm run check:runtime:ts-node
 
-      - name: Audit all dependencies
-        run: |
-          pnpm audit --audit-level=low || true
-          pnpm audit --json > /tmp/audit.json || true
-          node -e "const fs=require('fs');const p='/tmp/audit.json';const x=JSON.parse(fs.readFileSync(p,'utf8'));console.log(JSON.stringify(x.metadata?.vulnerabilities ?? x.metadata ?? {}, null, 2))"
-
-      - name: Audit production dependencies
-        run: pnpm audit --prod --audit-level=low || true
-
-      - name: Report outdated direct dependencies
-        run: pnpm outdated --recursive || true
-
-      - name: Scan maintained sources for deprecated APIs
-        run: |
-          grep -RInE --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=dist --exclude='pnpm-lock.yaml' \
-            '(url\.parse\(|new Buffer\(|Buffer\([^.]|fs\.exists\(|punycode|DEP[0-9]{4}|::set-output|save-state)' \
-            . || true
-
-      - name: Validate repository
-        run: pnpm check
+  bun:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install --no-save
+      - run: bun run check:runtime:bun
+      - run: bun run check

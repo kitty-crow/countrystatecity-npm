@@ -1,13 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 
-vi.mock('chalk', () => ({
-  default: {
-    red: (s: string) => s,
-    yellow: (s: string) => s,
-    green: (s: string) => s,
-    dim: (s: string) => s,
-  },
-}));
 
 import { printUsageFooter, progressBar, getTierName, formatNumber } from '../../src/lib/usage-footer.ts';
 

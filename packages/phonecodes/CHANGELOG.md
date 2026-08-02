@@ -1,4 +1,10 @@
 # @countrystatecity/phonecodes
+## 2.1.0
+
+### Minor Changes
+
+- Switched repository development to npm workspaces and native platform APIs.
+- Removed avoidable CLI runtime dependencies without changing commands or output shapes.
 
 ## 1.0.0 - 2026-06-12
 

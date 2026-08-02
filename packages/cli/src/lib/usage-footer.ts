@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+import chalk from './ansi.ts';
 import type { UsageInfo } from './api.ts';
 
 /**

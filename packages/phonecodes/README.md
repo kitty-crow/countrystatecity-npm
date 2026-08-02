@@ -1,7 +1,7 @@
 # @countrystatecity/phonecodes
 
 [![npm](https://img.shields.io/npm/v/@countrystatecity/phonecodes)](https://www.npmjs.com/package/@countrystatecity/phonecodes)
-[![CI](https://github.com/kitty-crow/countrystatecity-npm/workflows/Pipeline/badge.svg)](https://github.com/kitty-crow/countrystatecity-npm/actions/workflows/ci.yml)
+[![CI](https://github.com/kitty-crow/countrystatecity/workflows/Pipeline/badge.svg)](https://github.com/kitty-crow/countrystatecity/actions/workflows/ci.yml)
 [![npm downloads](https://img.shields.io/npm/dm/@countrystatecity/phonecodes?label=phonecodes)](https://www.npmjs.com/package/@countrystatecity/phonecodes)
 [![npm downloads](https://img.shields.io/npm/dw/@countrystatecity/phonecodes?label=phonecodes)](https://www.npmjs.com/package/@countrystatecity/phonecodes)
 

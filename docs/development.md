@@ -2,33 +2,52 @@
 
 ## Requirements
 
-- Node.js 20 or later;
-- pnpm 9 or later.
+- Node.js 20.19 or later;
+- npm 10 or later;
+- Bun 1.2 or later when validating the alternative runtime.
+
+npm workspaces and `package-lock.json` are the canonical repository environment.
 
 ## Commands
 
 ```sh
-pnpm install
-pnpm typecheck
-pnpm build
-pnpm test
-pnpm check
+npm ci
+npm run typecheck
+npm run build
+npm test
+npm run check
+npm run audit
 ```
 
-`pnpm check` is the release gate. It also typechecks repository scripts, rejects JavaScript source files and verifies the public compatibility contract.
+`npm run check` rejects non-TypeScript maintained source, rejects deprecated commands and removed dependencies, typechecks repository tooling and packages, builds every package, verifies the public compatibility contract and runs all tests.
+
+## TypeScript runners
+
+The repository scripts use standard TypeScript and Node APIs. The default runner is `tsx`, with explicit compatibility checks for `ts-node` and Bun:
+
+```sh
+npm run check:runtime
+npm run check:runtime:ts-node
+bun run scripts/runtime-smoke.ts
+```
+
+A full Bun validation can be run with:
+
+```sh
+bun install
+bun run check
+```
 
 ## Data updates
 
 ```sh
-pnpm fetch-database
-pnpm generate-data
-pnpm check
+npm run fetch-database
+npm run generate-data
+npm run check
 ```
 
-The fetcher validates the downloaded database before writing package data. Generators run independently, then the browser package is generated from the server package's split dataset.
-
-The scheduled GitHub workflow performs the same pipeline and opens a data-update pull request only when generated data changes.
+The fetcher uses the platform Fetch API, validates the downloaded database, then writes package data. The scheduled workflow runs the same pipeline and opens a pull request only when generated data changes.
 
 ## Adding code
 
-Keep public names unchanged unless a deliberately breaking release has been approved. Prefer small modules, explicit types and guard clauses. Use short local names where their meaning remains clear. Do not add generated JavaScript to the repository.
+Keep public names unchanged unless a deliberately breaking release has been approved. Prefer small modules, explicit types, native platform APIs and guard clauses. Use short local names where their meaning remains clear. Do not commit generated JavaScript.

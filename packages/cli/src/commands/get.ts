@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import chalk from 'chalk';
+import chalk from '../lib/ansi.ts';
 import { get } from '../lib/api.ts';
 import { printJson, printDetail } from '../lib/display.ts';
 import { printUsageFooter } from '../lib/usage-footer.ts';

@@ -1,6 +1,4 @@
 #!/usr/bin/env node
-import { get } from 'node:https';
-import type { IncomingMessage } from 'node:http';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { gunzipSync } from 'node:zlib';
@@ -12,37 +10,10 @@ const src = 'https://github.com/dr5hn/countries-states-cities-database/releases/
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const out = join(root, 'data', 'source.json');
 
-const body = (res: IncomingMessage): Promise<Buffer> => new Promise((resolve, reject) => {
-  const chunks: Buffer[] = [];
-  res.on('data', (chunk: Buffer | string) => chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk)));
-  res.once('end', () => resolve(Buffer.concat(chunks)));
-  res.once('error', reject);
-});
-
-const download = async (url: string, hops = 0): Promise<Buffer> => {
-  if (hops > 10) throw new Error('Too many redirects');
-  return new Promise((resolve, reject) => {
-    const req = get(url, { headers: { 'user-agent': 'countrystatecity-monorepo' } }, async res => {
-      try {
-        const code = res.statusCode ?? 0;
-        const next = res.headers.location;
-        if (code >= 300 && code < 400 && next) {
-          console.log(`  ↳ Redirecting (${code})...`);
-          res.resume();
-          resolve(await download(new URL(next, url).toString(), hops + 1));
-          return;
-        }
-        if (code !== 200) {
-          res.resume();
-          throw new Error(`HTTP ${code} from ${url}`);
-        }
-        resolve(await body(res));
-      } catch (err) {
-        reject(err);
-      }
-    });
-    req.once('error', reject);
-  });
+const download = async (url: string): Promise<Buffer> => {
+  const response = await fetch(url, { headers: { 'user-agent': 'countrystatecity-monorepo' } });
+  if (!response.ok) throw new Error(`HTTP ${response.status} from ${url}`);
+  return Buffer.from(await response.arrayBuffer());
 };
 
 const main = async (): Promise<void> => {
@@ -57,7 +28,7 @@ const main = async (): Promise<void> => {
   writeJson(out, parsed);
   const countries = readSource(out);
   console.log(`✓ Saved to data/source.json (${countries.length} countries)\n`);
-  console.log('Run pnpm generate-data to distribute to all packages.');
+  console.log('Run npm run generate-data to distribute to all packages.');
 };
 
 main().catch(fail);

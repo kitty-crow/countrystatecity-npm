@@ -18,23 +18,21 @@ jobs:
       id-token: write
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-
-      - uses: pnpm/action-setup@v4
-
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
-          node-version: '20'
-          cache: pnpm
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: package-lock.json
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: npm ci
 
       - name: Build all packages
-        run: pnpm turbo run build
+        run: npm run build
 
       - name: Publish each package
         env:
@@ -54,7 +52,7 @@ jobs:
             else
               echo "↑ Publishing $NAME@$VERSION..."
               cd packages/$pkg
-              pnpm publish --no-git-checks --access public
+              npm publish --access public
               cd ../..
               echo "✓ $NAME@$VERSION published"
             fi

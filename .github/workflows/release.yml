@@ -1,16 +1,14 @@
 name: Release
 
 on:
-  # Auto-trigger when an automated data-update PR is merged
   pull_request:
     types: [closed]
     branches: [main]
-  # Manual trigger for code-change releases
   workflow_dispatch:
 
 jobs:
   release:
-    name: Bump Versions & Update Changelogs
+    name: Bump versions and changelogs
     if: >-
       github.event_name == 'workflow_dispatch' ||
       (github.event.pull_request.merged == true &&
@@ -18,25 +16,20 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
-
-      - uses: pnpm/action-setup@v4
-
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
-          node-version: '20'
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci
       - name: Bump versions and changelogs
-        run: pnpm exec tsx scripts/release-data.ts
-
+        run: npm exec tsx -- scripts/release-data.ts
+      - name: Refresh npm lockfile
+        run: npm install --package-lock-only --ignore-scripts
       - name: Commit and push
-        run: pnpm exec tsx scripts/commit-release.ts
+        run: npm exec tsx -- scripts/commit-release.ts
