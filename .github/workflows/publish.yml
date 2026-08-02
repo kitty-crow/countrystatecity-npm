@@ -1,0 +1,85 @@
+name: Publish to npm
+
+on:
+  workflow_run:
+    workflows: ["Release"]
+    types: [completed]
+  workflow_dispatch:
+
+jobs:
+  publish:
+    name: Publish Packages to npm
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: package-lock.json
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build all packages
+        run: npm run build
+
+      - name: Publish each package
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          for pkg in countries countries-browser timezones currencies translations phonecodes cli; do
+            NAME=$(jq -r '.name' "packages/$pkg/package.json")
+            VERSION=$(jq -r '.version' "packages/$pkg/package.json")
+
+            echo "── $NAME@$VERSION ──"
+
+            # Check if already published on npm
+            HTTP=$(curl -s -o /dev/null -w "%{http_code}" "https://registry.npmjs.org/$NAME/$VERSION")
+
+            if [ "$HTTP" = "200" ]; then
+              echo "✓ $NAME@$VERSION already on npm — skipping"
+            else
+              echo "↑ Publishing $NAME@$VERSION..."
+              cd packages/$pkg
+              npm publish --access public
+              cd ../..
+              echo "✓ $NAME@$VERSION published"
+            fi
+          done
+
+      - name: Create GitHub Releases
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          for pkg in countries countries-browser timezones currencies translations phonecodes cli; do
+            NAME=$(jq -r '.name' "packages/$pkg/package.json")
+            VERSION=$(jq -r '.version' "packages/$pkg/package.json")
+            TAG="$NAME@$VERSION"
+
+            # Skip if tag already exists
+            if git tag --list | grep -q "^$TAG$"; then
+              echo "✓ Tag $TAG already exists — skipping"
+              continue
+            fi
+
+            # Extract changelog entry for this version
+            NOTES=$(awk "/^## $VERSION/{found=1; next} found && /^## /{exit} found{print}" packages/$pkg/CHANGELOG.md)
+
+            gh release create "$TAG" \
+              --title "$TAG" \
+              --notes "${NOTES:-Release $TAG}" \
+              --target main
+
+            echo "✓ GitHub release created: $TAG"
+          done

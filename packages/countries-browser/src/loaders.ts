@@ -3,37 +3,14 @@
  * Uses fetch API to load JSON from jsDelivr CDN with LRU caching
  */
 
-import type { ICountry, ICountryMeta, IState, ICity } from './types';
-import { getConfig } from './config';
-import { fetchJSON } from './fetcher';
-import { LRUCache } from './cache';
-
-let cache: LRUCache<string, unknown> | null = null;
-
-function getCache(): LRUCache<string, unknown> {
-  if (!cache) {
-    cache = new LRUCache<string, unknown>(getConfig().cacheSize);
-  }
-  return cache;
-}
+import { clear, load } from './data.ts';
+import type { ICity, ICountry, ICountryMeta, IState } from './types.ts';
 
 /**
  * Clear the cache (forces re-initialization on next use, picking up any config changes)
  */
 export function clearCache(): void {
-  cache = null;
-}
-
-/**
- * Load JSON with caching
- */
-async function loadCached<T>(key: string): Promise<T> {
-  const c = getCache();
-  const cached = c.get(key);
-  if (cached !== undefined) return cached as T;
-  const data = await fetchJSON<T>(`/data/${key}`);
-  c.set(key, data);
-  return data;
+  clear();
 }
 
 /**
@@ -41,7 +18,7 @@ async function loadCached<T>(key: string): Promise<T> {
  * @returns Array of countries (basic info only)
  */
 export async function getCountries(): Promise<ICountry[]> {
-  return loadCached<ICountry[]>('countries.json');
+  return load<ICountry[]>('countries.json');
 }
 
 /**
@@ -52,7 +29,7 @@ export async function getCountries(): Promise<ICountry[]> {
 export async function getCountryByCode(countryCode: string): Promise<ICountryMeta | null> {
   if (!countryCode) return null;
   try {
-    return await loadCached<ICountryMeta>(`country/${countryCode.toUpperCase()}.json`);
+    return await load<ICountryMeta>(`country/${countryCode.toUpperCase()}.json`);
   } catch {
     return null;
   }
@@ -66,7 +43,7 @@ export async function getCountryByCode(countryCode: string): Promise<ICountryMet
 export async function getStatesOfCountry(countryCode: string): Promise<IState[]> {
   if (!countryCode) return [];
   try {
-    return await loadCached<IState[]>(`states/${countryCode.toUpperCase()}.json`);
+    return await load<IState[]>(`states/${countryCode.toUpperCase()}.json`);
   } catch {
     return [];
   }
@@ -82,8 +59,7 @@ export async function getStateByCode(
   countryCode: string,
   stateCode: string,
 ): Promise<IState | null> {
-  const states = await getStatesOfCountry(countryCode);
-  return states.find((s) => s.iso2 === stateCode) || null;
+  return (await getStatesOfCountry(countryCode)).find(state => state.iso2 === stateCode) ?? null;
 }
 
 /**
@@ -98,9 +74,7 @@ export async function getCitiesOfState(
 ): Promise<ICity[]> {
   if (!countryCode || !stateCode) return [];
   try {
-    return await loadCached<ICity[]>(
-      `cities/${countryCode.toUpperCase()}-${stateCode.toUpperCase()}.json`,
-    );
+    return await load<ICity[]>(`cities/${countryCode.toUpperCase()}-${stateCode.toUpperCase()}.json`);
   } catch {
     return [];
   }
@@ -118,8 +92,7 @@ export async function getCityById(
   stateCode: string,
   cityId: number,
 ): Promise<ICity | null> {
-  const cities = await getCitiesOfState(countryCode, stateCode);
-  return cities.find((c) => c.id === cityId) || null;
+  return (await getCitiesOfState(countryCode, stateCode)).find(city => city.id === cityId) ?? null;
 }
 
 /**
@@ -130,10 +103,7 @@ export async function getCityById(
  */
 export async function getAllCitiesOfCountry(countryCode: string): Promise<ICity[]> {
   const states = await getStatesOfCountry(countryCode);
-  const cityArrays = await Promise.all(
-    states.map((state) => getCitiesOfState(countryCode, state.iso2)),
-  );
-  return cityArrays.flat();
+  return (await Promise.all(states.map(state => getCitiesOfState(countryCode, state.iso2)))).flat();
 }
 
 /**
@@ -142,11 +112,7 @@ export async function getAllCitiesOfCountry(countryCode: string): Promise<ICity[
  * @returns Array of all cities worldwide
  */
 export async function getAllCitiesInWorld(): Promise<ICity[]> {
-  const countries = await getCountries();
-  const allCities: ICity[] = [];
-  for (const country of countries) {
-    const cities = await getAllCitiesOfCountry(country.iso2);
-    allCities.push(...cities);
-  }
-  return allCities;
+  const rows: ICity[] = [];
+  for (const country of await getCountries()) rows.push(...await getAllCitiesOfCountry(country.iso2));
+  return rows;
 }

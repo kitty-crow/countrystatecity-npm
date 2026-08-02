@@ -1,6 +1,6 @@
 {
   "name": "@countrystatecity/countries-browser",
-  "version": "1.0.0",
+  "version": "2.1.0",
   "description": "Browser-native countries, states, and cities data with jsDelivr CDN and lazy loading",
   "keywords": [
     "country-state-city",
@@ -19,14 +19,14 @@
     "typescript"
   ],
   "author": "dr5hn",
-  "license": "ODbL-1.0",
+  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dr5hn/countrystatecity-countries-browser.git"
+    "url": "git+https://github.com/kitty-crow/countrystatecity.git"
   },
-  "homepage": "https://github.com/dr5hn/countrystatecity-countries-browser#readme",
+  "homepage": "https://github.com/kitty-crow/countrystatecity/tree/main/packages/countries-browser#readme",
   "bugs": {
-    "url": "https://github.com/dr5hn/countrystatecity-countries-browser/issues"
+    "url": "https://github.com/kitty-crow/countrystatecity/issues"
   },
   "type": "module",
   "main": "./dist/index.cjs",
@@ -55,13 +55,14 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
-    "generate-data": "node scripts/generate-data.cjs"
+    "generate-data": "tsx scripts/generate-data.ts"
   },
   "devDependencies": {
     "@types/node": "^20.19.19",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3",
-    "vitest": "^4.0.16"
+    "vitest": "^4.1.10",
+    "tsx": "^4.23.1"
   },
   "publishConfig": {
     "access": "public"

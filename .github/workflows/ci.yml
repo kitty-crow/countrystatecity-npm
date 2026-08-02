@@ -33,32 +33,28 @@ jobs:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
-          version: 9
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: pnpm
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: npm ci
 
       - name: Download latest countries-states-cities database
-        run: pnpm fetch-database
+        run: npm run fetch-database
 
       - name: Upload raw source data
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: source-data
           path: data/source.json
           retention-days: 1
 
   # ───────────────────────────────────────────────────────────────────────────
-  # STAGE 2 — GENERATE DATA  (after fetch-data)
+  # STAGE 2 — GENERATE DATA  (schedule / workflow_dispatch only)
   # ───────────────────────────────────────────────────────────────────────────
   generate-data:
     name: Generate Package Data
@@ -70,29 +66,27 @@ jobs:
       timezones: ${{ steps.stats.outputs.timezones }}
       currencies: ${{ steps.stats.outputs.currencies }}
       translations: ${{ steps.stats.outputs.translations }}
+      phonecodes: ${{ steps.stats.outputs.phonecodes }}
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
-          version: 9
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: pnpm
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: npm ci
 
       - name: Restore raw source data
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: source-data
           path: data/
+        continue-on-error: true
 
       - name: Generate data for all packages
-        run: pnpm generate-data
+        run: npm run generate-data
 
       - name: Collect statistics
         id: stats
@@ -101,6 +95,7 @@ jobs:
           echo "timezones=$(grep -o '"zoneName"' packages/timezones/src/data/timezones.json | wc -l | tr -d ' ')" >> $GITHUB_OUTPUT
           echo "currencies=$(grep -o '"code"' packages/currencies/src/data/currencies.json | wc -l | tr -d ' ')" >> $GITHUB_OUTPUT
           echo "translations=$(grep -o '"iso2"' packages/translations/src/data/translations.json | wc -l | tr -d ' ')" >> $GITHUB_OUTPUT
+          echo "phonecodes=$(grep -o '"iso2"' packages/phonecodes/src/data/phonecodes.json | wc -l | tr -d ' ')" >> $GITHUB_OUTPUT
 
       - name: Detect data changes
         id: check
@@ -115,7 +110,7 @@ jobs:
           fi
 
       - name: Upload generated data
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: generated-data
           path: packages/*/src/data
@@ -133,30 +128,32 @@ jobs:
        needs.generate-data.result == 'skipped')
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
-          version: 9
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: pnpm
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: npm ci
 
       - name: Apply generated data
         if: needs.generate-data.result == 'success'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: generated-data
           path: packages/
         continue-on-error: true
 
+      - name: Reject JavaScript source files
+        run: npm run check:languages
+
+      - name: Typecheck repository tooling
+        run: npm run typecheck:scripts
+
       - name: Typecheck all packages
-        run: pnpm turbo run typecheck
+        run: npm run typecheck
 
   # ───────────────────────────────────────────────────────────────────────────
   # STAGE 4 — BUILD
@@ -167,42 +164,41 @@ jobs:
     if: always() && needs.typecheck.result == 'success'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
-          version: 9
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: pnpm
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: npm ci
 
       - name: Apply generated data
         if: needs.generate-data.result == 'success'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: generated-data
           path: packages/
         continue-on-error: true
 
       - name: Build all packages
-        run: pnpm turbo run build
+        run: npm run build
+
+      - name: Verify public API compatibility
+        run: npm run check:api
 
       - name: Bundle sizes
         run: |
           echo "=== Bundle Sizes ==="
-          for pkg in countries countries-browser timezones currencies translations; do
+          for pkg in countries countries-browser timezones currencies translations phonecodes cli; do
             echo "── $pkg ──"
             du -sh packages/$pkg/dist/index.js 2>/dev/null || true
             du -sh packages/$pkg/dist/index.cjs 2>/dev/null || true
           done
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: dist-packages
           path: packages/*/dist
@@ -217,30 +213,26 @@ jobs:
     if: always() && needs.build.result == 'success'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
-          version: 9
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: pnpm
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: npm ci
 
       - name: Apply generated data
         if: needs.generate-data.result == 'success'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: generated-data
           path: packages/
         continue-on-error: true
 
       - name: Run all tests
-        run: pnpm turbo run test
+        run: npm test
 
   # ───────────────────────────────────────────────────────────────────────────
   # STAGE 6 — OPEN DATA UPDATE PR
@@ -260,12 +252,12 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Restore generated data
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: generated-data
           path: packages/
@@ -276,7 +268,7 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: 'chore: update data from countries-states-cities-database'
@@ -293,6 +285,7 @@ jobs:
             | Timezones | ${{ needs.generate-data.outputs.timezones }} |
             | Currencies | ${{ needs.generate-data.outputs.currencies }} |
             | Translations | ${{ needs.generate-data.outputs.translations }} |
+            | Phonecodes | ${{ needs.generate-data.outputs.phonecodes }} |
 
             ### Verification
             - ✅ Data fetched and generated

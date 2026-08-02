@@ -4,15 +4,15 @@
  */
 
 export class LRUCache<K, V> {
-  private cache = new Map<K, V>();
-  private maxSize: number;
+  readonly #map = new Map<K, V>();
+  readonly #max: number;
 
   /**
    * Create a new LRU cache with the given maximum number of entries.
    * @param maxSize Maximum number of entries before oldest is evicted
    */
   constructor(maxSize: number) {
-    this.maxSize = maxSize;
+    this.#max = maxSize;
   }
 
   /**
@@ -20,10 +20,10 @@ export class LRUCache<K, V> {
    * Returns undefined on cache miss.
    */
   get(key: K): V | undefined {
-    const value = this.cache.get(key);
+    const value = this.#map.get(key);
     if (value === undefined) return undefined;
-    this.cache.delete(key);
-    this.cache.set(key, value);
+    this.#map.delete(key);
+    this.#map.set(key, value);
     return value;
   }
 
@@ -32,18 +32,17 @@ export class LRUCache<K, V> {
    * If the key already exists, its value is updated and it becomes most recent.
    */
   set(key: K, value: V): void {
-    this.cache.delete(key);
-    this.cache.set(key, value);
-    if (this.cache.size > this.maxSize) {
-      const oldestKey = this.cache.keys().next().value!;
-      this.cache.delete(oldestKey);
-    }
+    this.#map.delete(key);
+    this.#map.set(key, value);
+    if (this.#map.size <= this.#max) return;
+    const oldest = this.#map.keys().next();
+    if (!oldest.done) this.#map.delete(oldest.value);
   }
 
   /**
    * Remove all entries from cache.
    */
   clear(): void {
-    this.cache.clear();
+    this.#map.clear();
   }
 }

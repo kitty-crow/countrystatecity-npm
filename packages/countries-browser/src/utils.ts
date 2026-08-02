@@ -2,8 +2,8 @@
  * Utility functions for @countrystatecity/countries-browser
  */
 
-import type { ICity } from './types';
-import { getCountries, getStatesOfCountry, getCitiesOfState, getCountryByCode } from './loaders';
+import { getCitiesOfState, getCountries, getCountryByCode, getStatesOfCountry } from './loaders.ts';
+import type { ICity } from './types.ts';
 
 /**
  * Validate if a country code exists
@@ -11,8 +11,7 @@ import { getCountries, getStatesOfCountry, getCitiesOfState, getCountryByCode } 
  * @returns True if the country code is valid
  */
 export async function isValidCountryCode(countryCode: string): Promise<boolean> {
-  const countries = await getCountries();
-  return countries.some((c) => c.iso2 === countryCode);
+  return (await getCountries()).some(country => country.iso2 === countryCode);
 }
 
 /**
@@ -22,8 +21,7 @@ export async function isValidCountryCode(countryCode: string): Promise<boolean> 
  * @returns True if the state code is valid for the given country
  */
 export async function isValidStateCode(countryCode: string, stateCode: string): Promise<boolean> {
-  const states = await getStatesOfCountry(countryCode);
-  return states.some((s) => s.iso2 === stateCode);
+  return (await getStatesOfCountry(countryCode)).some(state => state.iso2 === stateCode);
 }
 
 /**
@@ -38,9 +36,8 @@ export async function searchCitiesByName(
   stateCode: string,
   searchTerm: string,
 ): Promise<ICity[]> {
-  const cities = await getCitiesOfState(countryCode, stateCode);
-  const lowerTerm = searchTerm.toLowerCase();
-  return cities.filter((city) => city.name.toLowerCase().includes(lowerTerm));
+  const key = searchTerm.toLowerCase();
+  return (await getCitiesOfState(countryCode, stateCode)).filter(city => city.name.toLowerCase().includes(key));
 }
 
 /**
@@ -49,9 +46,7 @@ export async function searchCitiesByName(
  * @returns Country name or null if not found
  */
 export async function getCountryNameByCode(countryCode: string): Promise<string | null> {
-  const countries = await getCountries();
-  const country = countries.find((c) => c.iso2 === countryCode);
-  return country ? country.name : null;
+  return (await getCountries()).find(country => country.iso2 === countryCode)?.name ?? null;
 }
 
 /**
@@ -64,9 +59,7 @@ export async function getStateNameByCode(
   countryCode: string,
   stateCode: string,
 ): Promise<string | null> {
-  const states = await getStatesOfCountry(countryCode);
-  const state = states.find((s) => s.iso2 === stateCode);
-  return state ? state.name : null;
+  return (await getStatesOfCountry(countryCode)).find(state => state.iso2 === stateCode)?.name ?? null;
 }
 
 /**
@@ -81,9 +74,7 @@ export async function getTimezoneForCity(
   stateCode: string,
   cityName: string,
 ): Promise<string | null> {
-  const cities = await getCitiesOfState(countryCode, stateCode);
-  const city = cities.find((c) => c.name === cityName);
-  return city ? city.timezone : null;
+  return (await getCitiesOfState(countryCode, stateCode)).find(city => city.name === cityName)?.timezone ?? null;
 }
 
 /**
@@ -93,6 +84,6 @@ export async function getTimezoneForCity(
  */
 export async function getCountryTimezones(countryCode: string): Promise<string[]> {
   const meta = await getCountryByCode(countryCode);
-  if (!meta || !meta.timezones) return [];
-  return meta.timezones.map((tz) => tz.zoneName);
+  if (!meta?.timezones) return [];
+  return meta.timezones.map(timezone => timezone.zoneName);
 }

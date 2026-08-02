@@ -11,13 +11,13 @@ export type {
   ITimezone,
   ITranslations,
   ConfigOptions,
-} from './types';
+} from './types.ts';
 
-export { NetworkError, TimeoutError } from './errors';
+export { NetworkError, TimeoutError } from './errors.ts';
 
-export { configure, resetConfiguration } from './config';
+export { configure, resetConfiguration } from './config.ts';
 
-export { clearCache } from './loaders';
+export { clearCache } from './loaders.ts';
 
 export {
   getCountries,
@@ -28,7 +28,7 @@ export {
   getCityById,
   getAllCitiesOfCountry,
   getAllCitiesInWorld,
-} from './loaders';
+} from './loaders.ts';
 
 export {
   isValidCountryCode,
@@ -38,5 +38,5 @@ export {
   getStateNameByCode,
   getTimezoneForCity,
   getCountryTimezones,
-} from './utils';
+} from './utils.ts';
 

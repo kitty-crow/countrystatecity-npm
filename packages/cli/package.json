@@ -1,0 +1,64 @@
+{
+  "name": "@countrystatecity/cli",
+  "version": "2.1.0",
+  "description": "Official CLI for the Country State City API - search, explore, and generate code from geographic data",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "bin": {
+    "csc": "./dist/index.js"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --clean",
+    "dev": "tsx src/index.ts",
+    "test": "vitest",
+    "lint": "eslint src/",
+    "prepublishOnly": "tsup src/index.ts --format esm --dts --clean",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "country",
+    "state",
+    "city",
+    "geography",
+    "cli",
+    "country-state-city",
+    "geolocation",
+    "iso",
+    "dropdown",
+    "seed",
+    "code-generator"
+  ],
+  "author": "dr5hn",
+  "license": "MIT",
+  "homepage": "https://github.com/kitty-crow/countrystatecity/tree/main/packages/cli#readme",
+  "bugs": {
+    "url": "https://github.com/kitty-crow/countrystatecity/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kitty-crow/countrystatecity.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@inquirer/search": "^4.1.6",
+    "@inquirer/select": "^5.2.1",
+    "commander": "^13.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "eslint": "^10.8.0",
+    "tsup": "^8.5.1",
+    "tsx": "^4.23.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.10"
+  }
+}

@@ -1,0 +1,158 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+
+vi.mock('../../src/lib/api.ts', () => ({
+  get: vi.fn(),
+}));
+
+vi.mock('../../src/lib/config.ts', () => ({
+  getApiKey: vi.fn(() => 'test-key'),
+  getApiBase: vi.fn(() => 'https://api.countrystatecity.in/v1'),
+}));
+
+
+
+
+vi.mock('../../src/lib/output.ts', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../../src/lib/output.ts')>();
+  return {
+    ...actual,
+    isTTY: vi.fn(() => false),
+    promptCountry: vi.fn(),
+    promptState: vi.fn(),
+  };
+});
+
+import { Command } from 'commander';
+import { registerSearchCommands } from '../../src/commands/search.ts';
+import { get } from '../../src/lib/api.ts';
+
+const mockCountries = [
+  { id: 101, name: 'India', iso2: 'IN', iso3: 'IND', capital: 'New Delhi', phonecode: '91', currency: 'INR' },
+  { id: 233, name: 'United States', iso2: 'US', iso3: 'USA', capital: 'Washington', phonecode: '1', currency: 'USD' },
+];
+
+const mockStates = [
+  { id: 1, name: 'Maharashtra', iso2: 'MH', type: 'state' },
+  { id: 2, name: 'Karnataka', iso2: 'KA', type: 'state' },
+];
+
+const mockCities = [
+  { id: 1, name: 'Mumbai' },
+  { id: 2, name: 'Pune' },
+];
+
+describe('search commands', () => {
+  let program: Command;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    program = new Command();
+    program.exitOverride();
+    program.option('--json', 'Output as JSON');
+    registerSearchCommands(program);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  describe('search countries', () => {
+    it('fetches and displays all countries', async () => {
+      vi.mocked(get).mockResolvedValue({ data: mockCountries, usage: null });
+      const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+      await program.parseAsync(['node', 'csc', 'search', 'countries']);
+
+      expect(get).toHaveBeenCalledWith('/countries');
+    });
+
+    it('filters countries by name', async () => {
+      vi.mocked(get).mockResolvedValue({ data: mockCountries, usage: null });
+      const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+      await program.parseAsync(['node', 'csc', 'search', 'countries', '--filter', 'india']);
+
+      expect(get).toHaveBeenCalledWith('/countries');
+    });
+
+    it('outputs JSON when --json flag is set', async () => {
+      vi.mocked(get).mockResolvedValue({ data: mockCountries, usage: null });
+      const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+      await program.parseAsync(['node', 'csc', 'search', 'countries', '--json']);
+
+      expect(logSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe('search states', () => {
+    it('fetches states for a country', async () => {
+      vi.mocked(get).mockResolvedValue({ data: mockStates, usage: null });
+      const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+      await program.parseAsync(['node', 'csc', 'search', 'states', '--country', 'IN']);
+
+      expect(get).toHaveBeenCalledWith('/countries/IN/states');
+    });
+
+    it('fetches all states globally when --country is omitted', async () => {
+      vi.mocked(get).mockResolvedValue({ data: mockStates, usage: null });
+      vi.spyOn(console, 'log').mockImplementation(() => {});
+
+      await program.parseAsync(['node', 'csc', 'search', 'states']);
+
+      expect(get).toHaveBeenCalledWith('/states');
+    });
+  });
+
+  describe('search cities', () => {
+    it('fetches cities for a country and state', async () => {
+      vi.mocked(get).mockResolvedValue({ data: mockCities, usage: null });
+      vi.spyOn(console, 'log').mockImplementation(() => {});
+
+      await program.parseAsync(['node', 'csc', 'search', 'cities', '--country', 'IN', '--state', 'MH']);
+
+      expect(get).toHaveBeenCalledWith('/countries/IN/states/MH/cities');
+    });
+
+    it('fetches all cities for a country when --state is omitted', async () => {
+      vi.mocked(get).mockResolvedValue({ data: mockCities, usage: null });
+      vi.spyOn(console, 'log').mockImplementation(() => {});
+
+      await program.parseAsync(['node', 'csc', 'search', 'cities', '--country', 'IN']);
+
+      expect(get).toHaveBeenCalledWith('/countries/IN/cities');
+    });
+
+    it('exits with error when no country given', async () => {
+      const exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => { throw new Error('exit'); }) as () => never);
+      vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
+
+      await expect(
+        program.parseAsync(['node', 'csc', 'search', 'cities'])
+      ).rejects.toThrow('exit');
+
+      expect(exitSpy).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('global search', () => {
+    it('filters countries by query term', async () => {
+      vi.mocked(get).mockResolvedValue({ data: mockCountries, usage: null });
+      vi.spyOn(console, 'log').mockImplementation(() => {});
+
+      await program.parseAsync(['node', 'csc', 'search', 'india']);
+
+      expect(get).toHaveBeenCalledWith('/countries');
+    });
+
+    it('shows message when no countries match', async () => {
+      vi.mocked(get).mockResolvedValue({ data: mockCountries, usage: null });
+      vi.spyOn(console, 'log').mockImplementation(() => {});
+
+      await program.parseAsync(['node', 'csc', 'search', 'zzz']);
+
+      expect(console.log).toHaveBeenCalledWith(expect.stringContaining('No countries matching'));
+    });
+  });
+});

@@ -1,4 +1,4 @@
-export type { ICountryTranslation } from './types.js';
+export type { ICountryTranslation } from './types.ts';
 
 export {
   getTranslations,
@@ -6,7 +6,7 @@ export {
   getTranslation,
   getLocales,
   searchByTranslatedName,
-} from './loaders.js';
+} from './loaders.ts';
 
-export { getTranslationOrFallback } from './utils.js';
+export { getTranslationOrFallback } from './utils.ts';
 

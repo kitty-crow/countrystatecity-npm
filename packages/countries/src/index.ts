@@ -1,5 +1,5 @@
 /**
- * @world/countries - Official countries, states, and cities database
+ * @countrystatecity/countries - Official countries, states, and cities database
  * iOS/Safari compatible with minimal bundle size and lazy loading
  */
 
@@ -11,7 +11,7 @@ export type {
   ICity,
   ITimezone,
   ITranslations,
-} from './types';
+} from './types.ts';
 
 // Export all loaders
 export {
@@ -23,7 +23,7 @@ export {
   getAllCitiesOfCountry,
   getAllCitiesInWorld,
   getCityById,
-} from './loaders';
+} from './loaders.ts';
 
 // Export utilities
 export {
@@ -34,7 +34,7 @@ export {
   getStateNameByCode,
   getTimezoneForCity,
   getCountryTimezones,
-} from './utils';
+} from './utils.ts';
 
 // Default export for convenience
-export { getCountries as default } from './loaders';
+export { getCountries as default } from './loaders.ts';
