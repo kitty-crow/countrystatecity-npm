@@ -1,0 +1,51 @@
+name: Dependency and deprecation audit
+
+on:
+  push:
+    branches: [agent/dependency-deprecation-cleanup]
+  pull_request:
+    branches: [main]
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+
+      - name: Install pnpm
+        run: npm install --global pnpm@9.15.9
+
+      - name: Install dependencies and capture warnings
+        run: |
+          set -o pipefail
+          pnpm install --frozen-lockfile 2>&1 | tee /tmp/install.log
+          if grep -Ei '(deprecated|deprecationwarning)' /tmp/install.log; then
+            echo '::warning::Install-time deprecations were reported'
+          else
+            echo 'No install-time deprecations reported'
+          fi
+
+      - name: Audit all dependencies
+        run: |
+          pnpm audit --audit-level=low || true
+          pnpm audit --json > /tmp/audit.json || true
+          node -e "const fs=require('fs');const p='/tmp/audit.json';const x=JSON.parse(fs.readFileSync(p,'utf8'));console.log(JSON.stringify(x.metadata?.vulnerabilities ?? x.metadata ?? {}, null, 2))"
+
+      - name: Audit production dependencies
+        run: pnpm audit --prod --audit-level=low || true
+
+      - name: Report outdated direct dependencies
+        run: pnpm outdated --recursive || true
+
+      - name: Scan maintained sources for deprecated APIs
+        run: |
+          grep -RInE --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=dist --exclude='pnpm-lock.yaml' \
+            '(url\.parse\(|new Buffer\(|Buffer\([^.]|fs\.exists\(|punycode|DEP[0-9]{4}|::set-output|save-state)' \
+            . || true
+
+      - name: Validate repository
+        run: pnpm check
