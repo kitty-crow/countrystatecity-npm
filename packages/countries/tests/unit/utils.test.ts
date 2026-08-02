@@ -7,7 +7,7 @@ import {
   getStateNameByCode,
   getTimezoneForCity,
   getCountryTimezones,
-} from '../../src/utils';
+} from '../../../../src/countries/utils';
 
 describe('Utility Functions', () => {
   describe('isValidCountryCode', () => {

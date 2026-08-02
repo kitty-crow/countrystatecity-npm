@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
-vi.mock('../../src/lib/api.ts', () => ({
+vi.mock('../../../../src/cli/lib/api.ts', () => ({
   get: vi.fn(),
 }));
 
-vi.mock('../../src/lib/config.ts', () => ({
+vi.mock('../../../../src/cli/lib/config.ts', () => ({
   getApiKey: vi.fn(() => 'test-key'),
   getApiBase: vi.fn(() => 'https://api.countrystatecity.in/v1'),
 }));
@@ -12,8 +12,8 @@ vi.mock('../../src/lib/config.ts', () => ({
 
 
 import { Command } from 'commander';
-import { registerUsageCommand } from '../../src/commands/usage.ts';
-import { get } from '../../src/lib/api.ts';
+import { registerUsageCommand } from '../../../../src/cli/commands/usage.ts';
+import { get } from '../../../../src/cli/lib/api.ts';
 
 describe('usage command', () => {
   let program: Command;

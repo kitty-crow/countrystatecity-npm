@@ -1,12 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('../../src/lib/config.ts', () => ({
+vi.mock('../../../../src/cli/lib/config.ts', () => ({
   getApiKey: vi.fn(() => 'test-api-key'),
   getApiBase: vi.fn(() => 'https://api.countrystatecity.in/v1'),
 }));
 
-import { get, validateKey } from '../../src/lib/api.ts';
-import { getApiKey } from '../../src/lib/config.ts';
+import { get, validateKey } from '../../../../src/cli/lib/api.ts';
+import { getApiKey } from '../../../../src/cli/lib/config.ts';
 
 const fetchMock = vi.fn();
 const response = (data: unknown, status = 200, headers: Record<string, string> = {}): Response =>

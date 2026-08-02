@@ -5,7 +5,7 @@ import {
   getTimezoneInfo,
   getTimezoneAbbreviations,
   getTimezonesByAbbreviation
-} from '../../src/loaders';
+} from '../../../../src/timezones/loaders';
 
 describe('Timezone Loaders', () => {
   describe('getTimezones', () => {

@@ -5,7 +5,7 @@ import {
   getCurrenciesByCountry,
   getCurrencySymbol,
   searchCurrencies,
-} from '../../src/index.js';
+} from '../../../../src/currencies/index.js';
 
 describe('Currency API Integration', () => {
   it('complete workflow: country → currency → symbol', async () => {

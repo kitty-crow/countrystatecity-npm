@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { fetchJSON } from '../../src/fetcher';
-import { resetConfiguration, configure } from '../../src/config';
-import { NetworkError, TimeoutError } from '../../src/errors';
+import { fetchJSON } from '../../../../src/countries-browser/fetcher';
+import { resetConfiguration, configure } from '../../../../src/countries-browser/config';
+import { NetworkError, TimeoutError } from '../../../../src/countries-browser/errors';
 
 describe('fetchJSON', () => {
   beforeEach(() => {

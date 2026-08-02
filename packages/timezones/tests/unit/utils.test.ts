@@ -9,7 +9,7 @@ import {
   searchTimezones,
   getUniqueAbbreviations,
   getTimezonesByOffset
-} from '../../src/utils';
+} from '../../../../src/timezones/utils';
 
 describe('Timezone Utilities', () => {
   describe('convertTime', () => {

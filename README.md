@@ -4,6 +4,8 @@ Strict TypeScript packages for country, state, city, timezone, currency, transla
 
 Published ESM, CommonJS, declaration and deep-import entry points remain compatible with the pre-refactor packages.
 
+All implementation and generated datasets live under the single root [`src/`](src/) tree. The directories under `packages/` are compatibility and publishing shells.
+
 ## Packages
 
 | Package | Purpose |

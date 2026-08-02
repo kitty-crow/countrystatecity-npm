@@ -2,11 +2,16 @@
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
     "noEmit": true,
-    "types": ["node"]
+    "types": [
+      "node"
+    ]
   },
   "include": [
     "./**/*.ts",
-    "../packages/*/scripts/**/*.ts"
+    "../src/*/scripts/**/*.ts"
   ],
-  "exclude": ["../node_modules", "../packages/*/src/data"]
+  "exclude": [
+    "../node_modules",
+    "../src/*/data"
+  ]
 }

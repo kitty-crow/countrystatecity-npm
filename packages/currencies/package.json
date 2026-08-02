@@ -51,7 +51,7 @@
     "test:watch": "vitest",
     "test:compat": "vitest run compatibility",
     "typecheck": "tsc --noEmit",
-    "generate-data": "tsx scripts/generate-data.ts"
+    "generate-data": "tsx ../../src/currencies/scripts/generate-data.ts"
   },
   "devDependencies": {
     "@types/node": "^20.19.0",

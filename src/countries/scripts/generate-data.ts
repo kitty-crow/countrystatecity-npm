@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { fail } from '../../../scripts/lib/args.ts';
 import { readSource, type SrcCountry, type SrcState } from '../../../scripts/lib/source.ts';
 import { writeJson } from '../../../scripts/lib/fs.ts';
-import type { ICity, ICountry, ICountryMeta, IState } from '../src/types.ts';
+import type { ICity, ICountry, ICountryMeta, IState } from '../types.ts';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const safe = (name: string, code: string): string => `${name.replace(/\s+/g, '_')}-${code}`;
@@ -65,7 +65,7 @@ export const generate = (src: string, root: string): void => {
   console.log('📥 Loading source data...');
   const countries = readSource(src);
   console.log(`✓ Loaded ${countries.length} countries`);
-  const data = join(root, 'src', 'data');
+  const data = join(root, 'data');
   if (existsSync(data)) {
     console.log('🗑️  Removing existing data directory...');
     rmSync(data, { recursive: true });

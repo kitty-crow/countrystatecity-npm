@@ -5,7 +5,7 @@ import { describe, it, expect, vi } from 'vitest';
  * raw string content without ANSI escape sequences.
  */
 
-import { getAsciiArt, getBrandedHelp } from '../../src/lib/branding.ts';
+import { getAsciiArt, getBrandedHelp } from '../../../../src/cli/lib/branding.ts';
 
 describe('getAsciiArt', () => {
   it('contains block characters from the ASCII art rows', () => {

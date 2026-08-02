@@ -6,7 +6,7 @@ import {
   getStateByCode,
   getCitiesOfState,
   getCityById,
-} from '../../src/loaders';
+} from '../../../../src/countries/loaders';
 
 describe('Data Loaders', () => {
   describe('getCountries', () => {

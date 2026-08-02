@@ -7,9 +7,9 @@ import {
   getStateNameByCode,
   getTimezoneForCity,
   getCountryTimezones,
-} from '../../src/utils';
-import { configure, resetConfiguration } from '../../src/config';
-import { clearCache } from '../../src/loaders';
+} from '../../../../src/countries-browser/utils';
+import { configure, resetConfiguration } from '../../../../src/countries-browser/config';
+import { clearCache } from '../../../../src/countries-browser/loaders';
 
 function mockFetch(responses: Record<string, unknown>) {
   vi.stubGlobal('fetch', vi.fn().mockImplementation((url: string) => {

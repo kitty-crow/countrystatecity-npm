@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { fail, sourceArg } from '../../../scripts/lib/args.ts';
 import { ensureDir, exists, kb, readJson, writeJson } from '../../../scripts/lib/fs.ts';
 import { readSource } from '../../../scripts/lib/source.ts';
-import type { ICurrency } from '../src/types.ts';
+import type { ICurrency } from '../types.ts';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const currency = (value: unknown): value is ICurrency => {
@@ -72,7 +72,7 @@ export const generate = (src: string, out: string): void => {
 };
 
 try {
-  generate(sourceArg('tsx scripts/generate-data.ts <source-file-path> [output-file]'), process.argv[3] ?? join(here, '..', 'src', 'data', 'currencies.json'));
+  generate(sourceArg('tsx scripts/generate-data.ts <source-file-path> [output-file]'), process.argv[3] ?? join(here, '..', 'data', 'currencies.json'));
 } catch (err) {
   fail(err);
 }

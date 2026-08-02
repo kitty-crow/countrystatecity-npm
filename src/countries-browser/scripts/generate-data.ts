@@ -62,7 +62,7 @@ export const generate = (src: string, out: string): void => {
 const src = process.argv[2] ?? fail(new Error('Source data directory required\nUsage: tsx scripts/generate-data.ts <server-data-dir> [output-dir]'));
 const input = resolve(src);
 if (!existsSync(input)) fail(new Error(`Source directory not found: ${input}`));
-const out = resolve(process.argv[3] ?? join(here, '..', 'src', 'data'));
+const out = resolve(process.argv[3] ?? join(here, '..', 'data'));
 try {
   generate(input, out);
 } catch (err) {

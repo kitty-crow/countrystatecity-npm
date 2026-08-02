@@ -5,7 +5,7 @@ import {
   getTranslation,
   getLocales,
   searchByTranslatedName,
-} from '../../src/loaders';
+} from '../../../../src/translations/loaders';
 
 describe('Translation Loaders', () => {
   describe('getTranslations', () => {

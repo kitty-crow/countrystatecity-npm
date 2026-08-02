@@ -1,33 +1,39 @@
 # Architecture
 
-The repository uses npm workspaces and Turborepo. Each published package owns one public entry module and a small set of internal responsibilities.
+The repository uses npm workspaces and Turborepo. All maintained implementation and generated datasets live under one root `src/` tree. `packages/` contains only the stable npm package surfaces, tests, build configuration and package documentation.
 
 ```text
 source database
     -> typed validation
-    -> package-specific TypeScript generators
-    -> split JSON datasets
-    -> strict TypeScript loaders and utilities
-    -> ESM, CommonJS and declaration builds
+    -> src/<package>/scripts generators
+    -> src/<package>/data datasets
+    -> src/<package> strict TypeScript implementation
+    -> packages/<package>/dist ESM, CommonJS and declarations
 ```
 
-## Boundaries
+## Source tree
 
-`packages/countries` loads local server data. `packages/countries-browser` mirrors its public lookup API but obtains data through `fetch`. The timezone, currency, translation and phone-code packages own independent datasets and indexes. The CLI depends on the remote API rather than the bundled package data.
+Each package implementation is isolated below `src/<package>/`:
 
-Each package separates:
+- `index.ts` defines public exports;
+- `data.ts` owns typed data access and caching;
+- `loaders.ts` exposes public loading operations;
+- `utils.ts` contains derived operations;
+- `types.ts` contains public and internal types;
+- `scripts/generate-data.ts` generates that package's dataset;
+- `data/` contains generated source data where applicable.
 
-- public exports in `src/index.ts`;
-- typed data access and caching in `src/data.ts`;
-- public loading operations in `src/loaders.ts`;
-- derived operations in `src/utils.ts`;
-- generation in `scripts/generate-data.ts`.
+The CLI follows the same rule under `src/cli/`, divided into commands, platform helpers and templates.
 
-Shared repository tooling lives under `scripts/`. It validates the upstream database before any package generator receives it.
+## Package shells
+
+`packages/<package>/package.json` retains every published package name and every `main`, `module`, `types`, `exports`, data and executable path. Package-local build configuration compiles the matching root source directory back into `packages/<package>/dist`, so replacing the former repository or publishing its packages requires no consumer changes.
+
+Tests remain beside each package because they verify that package's public boundary, but they import the implementation from root `src/`.
 
 ## Public boundary
 
-Public names are intentionally descriptive and stable. Short names are used only for local implementation details. Package manifests retain the original ESM, CommonJS, declaration and data export paths.
+Public names are descriptive and stable. Short names are used only for local implementation details. The compatibility gate compares runtime exports, declaration shapes and manifest entry points against the pre-refactor baseline.
 
 ## Runtime and dependency policy
 

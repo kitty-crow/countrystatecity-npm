@@ -5,7 +5,7 @@ import {
   getCurrencySymbol,
   isValidCurrencyCode,
   searchCurrencies,
-} from '../src/index.ts';
+} from '../../../src/currencies/index.ts';
 
 console.log((await getCurrencies()).slice(0, 5));
 console.log(await getCurrencyByCode('USD'));

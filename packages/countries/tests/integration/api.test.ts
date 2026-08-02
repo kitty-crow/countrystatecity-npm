@@ -5,7 +5,7 @@ import {
   getStatesOfCountry,
   getCitiesOfState,
   getAllCitiesOfCountry,
-} from '../../src';
+} from '../../../../src/countries';
 
 /**
  * Integration tests demonstrating real-world usage patterns

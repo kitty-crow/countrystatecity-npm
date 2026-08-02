@@ -58,9 +58,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ios": "vitest run compatibility",
-    "lint": "eslint src --ext .ts",
+    "lint": "eslint ../../src/timezones --ext .ts",
     "typecheck": "tsc --noEmit",
-    "generate-data": "tsx scripts/generate-data.ts"
+    "generate-data": "tsx ../../src/timezones/scripts/generate-data.ts"
   },
   "devDependencies": {
     "@types/node": "^20.19.19",

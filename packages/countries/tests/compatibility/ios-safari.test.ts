@@ -4,7 +4,7 @@ import {
   getStatesOfCountry,
   getCitiesOfState,
   getAllCitiesOfCountry,
-} from '../../src/loaders';
+} from '../../../../src/countries/loaders';
 
 /**
  * iOS/Safari Compatibility Tests

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { getTranslationOrFallback } from '../../src/utils';
-import type { ICountryTranslation } from '../../src/types';
+import { getTranslationOrFallback } from '../../../../src/translations/utils';
+import type { ICountryTranslation } from '../../../../src/translations/types';
 
 const mockEntry: ICountryTranslation = {
   iso2: 'DE',

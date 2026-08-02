@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 
 
-import { printUsageFooter, progressBar, getTierName, formatNumber } from '../../src/lib/usage-footer.ts';
+import { printUsageFooter, progressBar, getTierName, formatNumber } from '../../../../src/cli/lib/usage-footer.ts';
 
 describe('usage-footer', () => {
   afterEach(() => {

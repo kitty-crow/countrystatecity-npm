@@ -91,19 +91,19 @@ jobs:
       - name: Collect statistics
         id: stats
         run: |
-          echo "countries=$(grep -o '"id"' packages/countries/src/data/countries.json | wc -l | tr -d ' ')" >> $GITHUB_OUTPUT
-          echo "timezones=$(grep -o '"zoneName"' packages/timezones/src/data/timezones.json | wc -l | tr -d ' ')" >> $GITHUB_OUTPUT
-          echo "currencies=$(grep -o '"code"' packages/currencies/src/data/currencies.json | wc -l | tr -d ' ')" >> $GITHUB_OUTPUT
-          echo "translations=$(grep -o '"iso2"' packages/translations/src/data/translations.json | wc -l | tr -d ' ')" >> $GITHUB_OUTPUT
-          echo "phonecodes=$(grep -o '"iso2"' packages/phonecodes/src/data/phonecodes.json | wc -l | tr -d ' ')" >> $GITHUB_OUTPUT
+          echo "countries=$(grep -o '"id"' src/countries/data/countries.json | wc -l | tr -d ' ')" >> $GITHUB_OUTPUT
+          echo "timezones=$(grep -o '"zoneName"' src/timezones/data/timezones.json | wc -l | tr -d ' ')" >> $GITHUB_OUTPUT
+          echo "currencies=$(grep -o '"code"' src/currencies/data/currencies.json | wc -l | tr -d ' ')" >> $GITHUB_OUTPUT
+          echo "translations=$(grep -o '"iso2"' src/translations/data/translations.json | wc -l | tr -d ' ')" >> $GITHUB_OUTPUT
+          echo "phonecodes=$(grep -o '"iso2"' src/phonecodes/data/phonecodes.json | wc -l | tr -d ' ')" >> $GITHUB_OUTPUT
 
       - name: Detect data changes
         id: check
         run: |
-          if git diff --name-only -- 'packages/*/src/data' | grep -q .; then
+          if git diff --name-only -- 'src/*/data' | grep -q .; then
             echo "changed=true" >> $GITHUB_OUTPUT
             echo "Changes detected:"
-            git diff --stat -- 'packages/*/src/data'
+            git diff --stat -- 'src/*/data'
           else
             echo "changed=false" >> $GITHUB_OUTPUT
             echo "No data changes — data is already up to date."
@@ -113,7 +113,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: generated-data
-          path: packages/*/src/data
+          path: src/*/data
           retention-days: 1
 
   # ───────────────────────────────────────────────────────────────────────────
@@ -143,7 +143,7 @@ jobs:
         uses: actions/download-artifact@v7
         with:
           name: generated-data
-          path: packages/
+          path: src/
         continue-on-error: true
 
       - name: Reject JavaScript source files
@@ -179,7 +179,7 @@ jobs:
         uses: actions/download-artifact@v7
         with:
           name: generated-data
-          path: packages/
+          path: src/
         continue-on-error: true
 
       - name: Build all packages
@@ -228,7 +228,7 @@ jobs:
         uses: actions/download-artifact@v7
         with:
           name: generated-data
-          path: packages/
+          path: src/
         continue-on-error: true
 
       - name: Run all tests
@@ -260,7 +260,7 @@ jobs:
         uses: actions/download-artifact@v7
         with:
           name: generated-data
-          path: packages/
+          path: src/
 
       - name: Configure git
         run: |

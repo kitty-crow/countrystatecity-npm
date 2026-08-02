@@ -55,7 +55,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
-    "generate-data": "tsx scripts/generate-data.ts"
+    "generate-data": "tsx ../../src/countries-browser/scripts/generate-data.ts"
   },
   "devDependencies": {
     "@types/node": "^20.19.19",

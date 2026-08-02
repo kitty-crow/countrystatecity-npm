@@ -18,10 +18,10 @@ import {
   configure,
   resetConfiguration,
   clearCache,
-} from '../../src/index';
+} from '../../../../src/countries-browser/index';
 
 describe('integration: real data', () => {
-  const dataDir = join(__dirname, '..', '..', 'src', 'data');
+  const dataDir = join(__dirname, '..', '..', '..', '..', 'src', 'countries-browser', 'data');
 
   beforeAll(() => {
     vi.stubGlobal('fetch', vi.fn().mockImplementation((url: string) => {

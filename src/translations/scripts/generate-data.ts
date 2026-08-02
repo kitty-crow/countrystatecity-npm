@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { fail, sourceArg } from '../../../scripts/lib/args.ts';
 import { kb, writeJson } from '../../../scripts/lib/fs.ts';
 import { readSource } from '../../../scripts/lib/source.ts';
-import type { ICountryTranslation } from '../src/types.ts';
+import type { ICountryTranslation } from '../types.ts';
 
 const here = dirname(fileURLToPath(import.meta.url));
 
@@ -36,7 +36,7 @@ export const generate = (src: string, out: string): void => {
 };
 
 try {
-  generate(sourceArg('tsx scripts/generate-data.ts <source-file-path> [output-file]'), process.argv[3] ?? join(here, '..', 'src', 'data', 'translations.json'));
+  generate(sourceArg('tsx scripts/generate-data.ts <source-file-path> [output-file]'), process.argv[3] ?? join(here, '..', 'data', 'translations.json'));
 } catch (err) {
   fail(err);
 }

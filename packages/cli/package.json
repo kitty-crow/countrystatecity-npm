@@ -15,11 +15,11 @@
     "node": ">=18"
   },
   "scripts": {
-    "build": "tsup src/index.ts --format esm --dts --clean",
-    "dev": "tsx src/index.ts",
+    "build": "tsup",
+    "dev": "tsx ../../src/cli/index.ts",
     "test": "vitest",
-    "lint": "eslint src/",
-    "prepublishOnly": "tsup src/index.ts --format esm --dts --clean",
+    "lint": "eslint ../../src/cli/",
+    "prepublishOnly": "tsup",
     "typecheck": "tsc --noEmit"
   },
   "keywords": [
