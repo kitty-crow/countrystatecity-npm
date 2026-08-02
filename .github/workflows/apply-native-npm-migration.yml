@@ -34,6 +34,16 @@ jobs:
 
       - name: Apply migration
         run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('.github/migrate.py')
+          value = path.read_text(encoding='utf-8')
+          value = value.replace(
+              'file.write_text(content.rstrip() + "\\n", encoding="utf-8")',
+              'file.write_text(content.strip("\\n") + "\\n", encoding="utf-8")',
+          )
+          path.write_text(value, encoding='utf-8')
+          PY
           python3 -m py_compile .github/migrate.py
           python3 .github/migrate.py
 
