@@ -42,9 +42,10 @@ jobs:
           )
           path.write_text(value, encoding='utf-8')
           PY
-          python3 -m py_compile .github/migrate.py .github/finalise.py
+          python3 -m py_compile .github/migrate.py .github/finalise.py .github/fix-validation.py
           python3 .github/migrate.py
           python3 .github/finalise.py
+          python3 .github/fix-validation.py
 
       - name: Generate npm lockfile
         run: |
@@ -85,6 +86,7 @@ jobs:
           test ! -e pnpm-workspace.yaml
           test ! -e .github/migrate.py
           test ! -e .github/finalise.py
+          test ! -e .github/fix-validation.py
           test ! -e .github/workflows/apply-native-npm-migration.yml
           npm run check:deprecations
 
