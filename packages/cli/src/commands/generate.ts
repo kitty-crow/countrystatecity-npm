@@ -1,20 +1,21 @@
 import { Command } from 'commander';
-import chalk from 'chalk';
+import chalk from '../lib/ansi.ts';
 import { mkdir, writeFile } from 'fs/promises';
 import { join } from 'path';
-import { get, type UsageInfo } from '../lib/api.js';
-import { printUsageFooter } from '../lib/usage-footer.js';
-import { createSpinner, type GlobalFlags, type Spinner } from '../lib/output.js';
+import { get, type UsageInfo } from '../lib/api.ts';
+import { printUsageFooter } from '../lib/usage-footer.ts';
+import { createSpinner, type Spinner } from '../lib/output.ts';
 import {
   generateCountryDropdown,
   generateStateDropdown,
   generateCityDropdown,
-} from '../templates/react-dropdown.js';
+} from '../templates/react-dropdown.ts';
 import {
   generateCountrySeed,
   generateStateSeed,
   generateCitySeed,
-} from '../templates/prisma-seed.js';
+} from '../templates/prisma-seed.ts';
+import { getFlags } from '../lib/flags.ts';
 
 /**
  * Checks tier gating from usage headers after a data fetch.
@@ -66,12 +67,7 @@ export function registerGenerateCommands(program: Command): void {
         },
         cmd: Command
       ) => {
-        const globalOpts = cmd.optsWithGlobals();
-        const flags: GlobalFlags = {
-          json: globalOpts.json ?? false,
-          quiet: globalOpts.quiet ?? false,
-          noFooter: globalOpts.footer === false,
-        };
+        const flags = getFlags(cmd);
 
         if (options.format !== 'react') {
           process.stderr.write(chalk.red(`Unsupported format: ${options.format}`) + '\n');
@@ -164,12 +160,7 @@ export function registerGenerateCommands(program: Command): void {
         },
         cmd: Command
       ) => {
-        const globalOpts = cmd.optsWithGlobals();
-        const flags: GlobalFlags = {
-          json: globalOpts.json ?? false,
-          quiet: globalOpts.quiet ?? false,
-          noFooter: globalOpts.footer === false,
-        };
+        const flags = getFlags(cmd);
 
         if (options.format !== 'prisma') {
           process.stderr.write(chalk.red(`Unsupported format: ${options.format}`) + '\n');

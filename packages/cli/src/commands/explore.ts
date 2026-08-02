@@ -1,11 +1,12 @@
 import { Command } from 'commander';
 import select from '@inquirer/select';
 import search from '@inquirer/search';
-import { get } from '../lib/api.js';
-import { printTable, printJson } from '../lib/display.js';
-import { printUsageFooter } from '../lib/usage-footer.js';
-import { stderr, type GlobalFlags } from '../lib/output.js';
-import type { UsageInfo } from '../lib/api.js';
+import { get } from '../lib/api.ts';
+import { printTable, printJson } from '../lib/display.ts';
+import { printUsageFooter } from '../lib/usage-footer.ts';
+import { stderr, type GlobalFlags } from '../lib/output.ts';
+import type { UsageInfo } from '../lib/api.ts';
+import { getFlags } from '../lib/flags.ts';
 
 // ---------------------------------------------------------------------------
 // Interfaces
@@ -220,7 +221,7 @@ function handleGenerateSeed(countryIso: string): void {
  * @param flags - Global CLI flags forwarded from the parent command.
  * @returns     The most recent `UsageInfo` from any API call, or null.
  */
-async function runExploreSession(flags: GlobalFlags): Promise<UsageInfo | null> {
+async function runExploreSession(_flags: GlobalFlags): Promise<UsageInfo | null> {
   // Step 1 – Fetch all countries
   const { data: countries, usage: countriesUsage } = await get<Country[]>('/countries');
   let latestUsage: UsageInfo | null = countriesUsage;
@@ -300,12 +301,7 @@ export function registerExploreCommand(program: Command): void {
         process.exit(1);
       }
 
-      const globalOpts = cmd.optsWithGlobals();
-      const flags: GlobalFlags = {
-        json: globalOpts.json ?? false,
-        quiet: globalOpts.quiet ?? false,
-        noFooter: globalOpts.footer === false,
-      };
+      const flags = getFlags(cmd);
 
       const usage = await runExploreSession(flags);
       printUsageFooter(usage, flags);

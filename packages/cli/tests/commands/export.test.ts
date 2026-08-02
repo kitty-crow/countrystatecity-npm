@@ -1,35 +1,31 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('open', () => ({ default: vi.fn() }));
-vi.mock('chalk', () => ({
-  default: { dim: (s: string) => s, hex: () => (s: string) => s },
-}));
+vi.mock('../../src/lib/browser.ts', () => ({ openUrl: vi.fn() }));
 
 import { Command } from 'commander';
-import { registerExportCommand } from '../../src/commands/export.js';
-import open from 'open';
+import { registerExportCommand } from '../../src/commands/export.ts';
+import { openUrl } from '../../src/lib/browser.ts';
 
 describe('export command', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
-  afterEach(() => { vi.restoreAllMocks(); });
+  beforeEach(() => vi.clearAllMocks());
+  afterEach(() => vi.restoreAllMocks());
 
-  it('opens export tool URL in browser', async () => {
+  it('opens the export tool in the browser', async () => {
     vi.spyOn(console, 'log').mockImplementation(() => {});
     const program = new Command();
     program.exitOverride();
     registerExportCommand(program);
     await program.parseAsync(['node', 'csc', 'export']);
-    expect(open).toHaveBeenCalledWith('https://export.countrystatecity.in');
+    expect(openUrl).toHaveBeenCalledWith('https://export.countrystatecity.in');
   });
 
-  it('outputs JSON when --json flag is set', async () => {
+  it('outputs JSON without opening a browser', async () => {
     vi.spyOn(console, 'log').mockImplementation(() => {});
     const program = new Command();
     program.option('--json');
     program.exitOverride();
     registerExportCommand(program);
     await program.parseAsync(['node', 'csc', '--json', 'export']);
-    // Verify JSON was output (not browser opened)
-    expect(open).not.toHaveBeenCalled();
+    expect(openUrl).not.toHaveBeenCalled();
   });
 });

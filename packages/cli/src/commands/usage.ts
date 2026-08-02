@@ -1,13 +1,14 @@
 import { Command } from 'commander';
-import chalk from 'chalk';
-import { get } from '../lib/api.js';
+import chalk from '../lib/ansi.ts';
+import { get } from '../lib/api.ts';
 import {
   progressBar,
   getTierName,
   formatNumber,
   timeUntilDailyReset,
-} from '../lib/usage-footer.js';
-import { createSpinner, type GlobalFlags } from '../lib/output.js';
+} from '../lib/usage-footer.ts';
+import { createSpinner } from '../lib/output.ts';
+import { getFlags } from '../lib/flags.ts';
 
 /**
  * Returns the monthly price label for a tier.
@@ -38,12 +39,7 @@ export function registerUsageCommand(program: Command): void {
     .command('usage')
     .description('View API usage and quota')
     .action(async (_options: Record<string, unknown>, cmd: Command) => {
-      const globalOpts = cmd.optsWithGlobals();
-      const flags: GlobalFlags = {
-        json: globalOpts.json ?? false,
-        quiet: globalOpts.quiet ?? false,
-        noFooter: globalOpts.footer === false,
-      };
+      const flags = getFlags(cmd);
 
       const spinner = await createSpinner('Fetching usage...', flags);
       const { usage } = await get<unknown>('/countries/IN');

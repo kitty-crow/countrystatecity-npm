@@ -1,11 +1,12 @@
 import { Command } from 'commander';
-import chalk from 'chalk';
-import readline from 'readline';
-import { Writable } from 'stream';
-import { getApiKey, setApiKey, clearApiKey } from '../lib/config.js';
-import { validateKey } from '../lib/api.js';
-import { getTierName, formatNumber } from '../lib/usage-footer.js';
-import { createSpinner, isTTY, type GlobalFlags } from '../lib/output.js';
+import chalk from '../lib/ansi.ts';
+import readline from 'node:readline';
+import { Writable } from 'node:stream';
+import { getApiKey, setApiKey, clearApiKey } from '../lib/config.ts';
+import { validateKey } from '../lib/api.ts';
+import { getTierName, formatNumber } from '../lib/usage-footer.ts';
+import { createSpinner, isTTY } from '../lib/output.ts';
+import { getFlags } from '../lib/flags.ts';
 
 /**
  * Prompts the user for an API key with masked input.
@@ -67,12 +68,7 @@ export function registerAuthCommands(program: Command): void {
     .description('Authenticate with your API key')
     .option('--key <apiKey>', 'Provide API key directly')
     .action(async (options: { key?: string }, cmd: Command) => {
-      const globalOpts = cmd.optsWithGlobals();
-      const flags: GlobalFlags = {
-        json: globalOpts.json ?? false,
-        quiet: globalOpts.quiet ?? false,
-        noFooter: globalOpts.footer === false,
-      };
+      const flags = getFlags(cmd);
 
       if (!options.key && !isTTY()) {
         process.stderr.write(chalk.red('API key required in non-interactive mode.') + '\n');
@@ -115,12 +111,7 @@ export function registerAuthCommands(program: Command): void {
     .command('status')
     .description('Check authentication status')
     .action(async (_options: Record<string, unknown>, cmd: Command) => {
-      const globalOpts = cmd.optsWithGlobals();
-      const flags: GlobalFlags = {
-        json: globalOpts.json ?? false,
-        quiet: globalOpts.quiet ?? false,
-        noFooter: globalOpts.footer === false,
-      };
+      const flags = getFlags(cmd);
 
       const key = getApiKey();
       if (!key) {
@@ -149,9 +140,9 @@ export function registerAuthCommands(program: Command): void {
         const output: Record<string, unknown> = { authenticated: true, key: masked };
         if (result.usage) {
           const tier = getTierName(result.usage.dailyLimit);
-          output.tier = tier;
-          output.daily = { used: result.usage.dailyUsed, limit: result.usage.dailyLimit };
-          output.monthly = { used: result.usage.monthlyUsed, limit: result.usage.monthlyLimit };
+          output['tier'] = tier;
+          output['daily'] = { used: result.usage.dailyUsed, limit: result.usage.dailyLimit };
+          output['monthly'] = { used: result.usage.monthlyUsed, limit: result.usage.monthlyLimit };
         }
         process.stdout.write(JSON.stringify(output) + '\n');
         return;
@@ -177,12 +168,7 @@ export function registerAuthCommands(program: Command): void {
     .command('logout')
     .description('Remove stored API key')
     .action((_options: Record<string, unknown>, cmd: Command) => {
-      const globalOpts = cmd.optsWithGlobals();
-      const flags: GlobalFlags = {
-        json: globalOpts.json ?? false,
-        quiet: globalOpts.quiet ?? false,
-        noFooter: globalOpts.footer === false,
-      };
+      const flags = getFlags(cmd);
 
       clearApiKey();
       if (flags.json) {

@@ -4,14 +4,8 @@ import { describe, it, expect, vi } from 'vitest';
  * Mock chalk to pass through all text unchanged so tests can assert on
  * raw string content without ANSI escape sequences.
  */
-vi.mock('chalk', () => ({
-  default: {
-    hex: (_color: string) => (s: string) => s,
-    dim: (s: string) => s,
-  },
-}));
 
-import { getAsciiArt, getBrandedHelp } from '../../src/lib/branding.js';
+import { getAsciiArt, getBrandedHelp } from '../../src/lib/branding.ts';
 
 describe('getAsciiArt', () => {
   it('contains block characters from the ASCII art rows', () => {
@@ -21,7 +15,7 @@ describe('getAsciiArt', () => {
 
   it('contains the version string', () => {
     const art = getAsciiArt();
-    expect(art).toContain('v0.1.1');
+    expect(art).toContain('v2.0.0');
   });
 
   it('contains the subtitle text', () => {

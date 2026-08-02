@@ -1,5 +1,5 @@
-import chalk from 'chalk';
-import type { UsageInfo } from './api.js';
+import chalk from './ansi.ts';
+import type { UsageInfo } from './api.ts';
 
 /**
  * Infers tier name from daily API limit.

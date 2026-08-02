@@ -1,0 +1,9 @@
+{
+  "countries": {"main":"./dist/index.cjs","module":"./dist/index.js","types":"./dist/index.d.ts","import":"./dist/index.js","require":"./dist/index.cjs","importTypes":"./dist/index.d.ts","requireTypes":"./dist/index.d.cts","data":"./dist/data/*"},
+  "countries-browser": {"main":"./dist/index.cjs","module":"./dist/index.js","types":"./dist/index.d.ts","import":"./dist/index.js","require":"./dist/index.cjs","importTypes":"./dist/index.d.ts","requireTypes":"./dist/index.d.cts","data":"./dist/data/*"},
+  "timezones": {"main":"./dist/index.cjs","module":"./dist/index.js","types":"./dist/index.d.ts","import":"./dist/index.js","require":"./dist/index.cjs","importTypes":"./dist/index.d.ts","requireTypes":"./dist/index.d.cts","data":"./dist/data/*"},
+  "currencies": {"main":"./dist/index.cjs","module":"./dist/index.js","types":"./dist/index.d.ts","import":"./dist/index.js","require":"./dist/index.cjs","importTypes":"./dist/index.d.ts","requireTypes":"./dist/index.d.cts","data":"./dist/data/*"},
+  "translations": {"main":"./dist/index.cjs","module":"./dist/index.js","types":"./dist/index.d.ts","import":"./dist/index.js","require":"./dist/index.cjs","importTypes":"./dist/index.d.ts","requireTypes":"./dist/index.d.cts","data":"./dist/data/*"},
+  "phonecodes": {"main":"./dist/index.cjs","module":"./dist/index.js","types":"./dist/index.d.ts","import":"./dist/index.js","require":"./dist/index.cjs","importTypes":"./dist/index.d.ts","requireTypes":"./dist/index.d.cts","data":"./dist/data/*"},
+  "cli": {"bin":"./dist/index.js"}
+}

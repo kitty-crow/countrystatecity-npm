@@ -1,4 +1,10 @@
-import type { ITimezone, ITimezoneInfo, ITimezoneAbbreviation } from './types';
+import { abbreviations, all, country } from './data.ts';
+import type { ITimezone, ITimezoneAbbreviation, ITimezoneInfo } from './types.ts';
+
+const offset = (date: Date, zone: string): number => {
+  const text = date.toLocaleString('en-US', { timeZone: zone });
+  return new Date(text).getTimezoneOffset();
+};
 
 /**
  * Get all available timezones
@@ -6,8 +12,7 @@ import type { ITimezone, ITimezoneInfo, ITimezoneAbbreviation } from './types';
  * @returns Promise resolving to array of all timezones
  */
 export async function getTimezones(): Promise<ITimezone[]> {
-  const { default: timezones } = await import('./data/timezones.json');
-  return timezones;
+  return all();
 }
 
 /**
@@ -18,9 +23,8 @@ export async function getTimezones(): Promise<ITimezone[]> {
  */
 export async function getTimezonesByCountry(countryCode: string): Promise<ITimezone[]> {
   try {
-    const { default: timezones } = await import(`./data/by-country/${countryCode}.json`);
-    return timezones;
-  } catch (error) {
+    return await country(countryCode);
+  } catch {
     console.error(`Timezones for country ${countryCode} not found`);
     return [];
   }
@@ -32,37 +36,18 @@ export async function getTimezonesByCountry(countryCode: string): Promise<ITimez
  * @returns Promise resolving to timezone info or null if not found
  */
 export async function getTimezoneInfo(timezoneName: string): Promise<ITimezoneInfo | null> {
-  const timezones = await getTimezones();
-  const timezone = timezones.find(tz => tz.zoneName === timezoneName);
-
-  if (!timezone) {
-    return null;
-  }
-
+  const item = (await getTimezones()).find(tz => tz.zoneName === timezoneName);
+  if (!item) return null;
   const now = new Date();
-
-  // Check if DST is currently active by comparing offsets
-  const january = new Date(now.getFullYear(), 0, 1);
-  const july = new Date(now.getFullYear(), 6, 1);
-
-  const janStr = january.toLocaleString('en-US', { timeZone: timezoneName });
-  const julStr = july.toLocaleString('en-US', { timeZone: timezoneName });
-  const nowStr = now.toLocaleString('en-US', { timeZone: timezoneName });
-
-  const janOffset = new Date(janStr).getTimezoneOffset();
-  const julOffset = new Date(julStr).getTimezoneOffset();
-  const nowOffset = new Date(nowStr).getTimezoneOffset();
-
-  // Standard time is when offset is maximum (most positive)
-  const standardOffset = Math.max(janOffset, julOffset);
-  const isDST = nowOffset < standardOffset;
-
+  const jan = new Date(now.getFullYear(), 0, 1);
+  const jul = new Date(now.getFullYear(), 6, 1);
+  const standard = Math.max(offset(jan, timezoneName), offset(jul, timezoneName));
   return {
-    timezone: timezone.zoneName,
+    timezone: item.zoneName,
     currentTime: now.toISOString(),
-    utcOffset: timezone.gmtOffsetName,
-    isDST,
-    gmtOffset: timezone.gmtOffset
+    utcOffset: item.gmtOffsetName,
+    isDST: offset(now, timezoneName) < standard,
+    gmtOffset: item.gmtOffset,
   };
 }
 
@@ -72,8 +57,7 @@ export async function getTimezoneInfo(timezoneName: string): Promise<ITimezoneIn
  * @returns Promise resolving to array of timezone abbreviations
  */
 export async function getTimezoneAbbreviations(): Promise<ITimezoneAbbreviation[]> {
-  const { default: abbreviations } = await import('./data/abbreviations.json');
-  return abbreviations;
+  return abbreviations();
 }
 
 /**
@@ -82,13 +66,8 @@ export async function getTimezoneAbbreviations(): Promise<ITimezoneAbbreviation[
  * @returns Promise resolving to array of matching timezones
  */
 export async function getTimezonesByAbbreviation(abbreviation: string): Promise<ITimezone[]> {
-  const abbrevs = await getTimezoneAbbreviations();
-  const match = abbrevs.find(a => a.abbreviation.toLowerCase() === abbreviation.toLowerCase());
-  
-  if (!match) {
-    return [];
-  }
-
-  const allTimezones = await getTimezones();
-  return allTimezones.filter(tz => match.timezones.includes(tz.zoneName));
+  const key = abbreviation.toLowerCase();
+  const match = (await getTimezoneAbbreviations()).find(item => item.abbreviation.toLowerCase() === key);
+  if (!match) return [];
+  return (await getTimezones()).filter(item => match.timezones.includes(item.zoneName));
 }

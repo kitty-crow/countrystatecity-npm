@@ -2,7 +2,7 @@
  * Configuration management for @countrystatecity/countries-browser
  */
 
-import type { ConfigOptions } from './types';
+import type { ConfigOptions } from './types.ts';
 
 declare const __VERSION__: string;
 
@@ -13,20 +13,20 @@ interface ResolvedConfig {
   cacheSize: number;
 }
 
-const DEFAULT_CONFIG: ResolvedConfig = {
+const defaults: ResolvedConfig = {
   baseURL: `https://cdn.jsdelivr.net/npm/@countrystatecity/countries-browser@${__VERSION__}/dist`,
   timeout: 5000,
   headers: {},
   cacheSize: 50,
 };
 
-let currentConfig: ResolvedConfig = { ...DEFAULT_CONFIG };
+let config: ResolvedConfig = { ...defaults };
 
 /**
  * Get the current resolved configuration
  */
 export function getConfig(): ResolvedConfig {
-  return currentConfig;
+  return config;
 }
 
 /**
@@ -34,12 +34,12 @@ export function getConfig(): ResolvedConfig {
  * @param options - Partial configuration to merge with defaults
  */
 export function configure(options: ConfigOptions): void {
-  currentConfig = { ...currentConfig, ...options } as ResolvedConfig;
+  Object.assign(config, options);
 }
 
 /**
  * Reset configuration to defaults
  */
 export function resetConfiguration(): void {
-  currentConfig = { ...DEFAULT_CONFIG };
+  config = { ...defaults };
 }

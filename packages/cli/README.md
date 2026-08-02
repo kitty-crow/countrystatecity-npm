@@ -1,7 +1,7 @@
 # @countrystatecity/cli
 
 [![npm](https://img.shields.io/npm/v/@countrystatecity/cli)](https://www.npmjs.com/package/@countrystatecity/cli)
-[![CI](https://github.com/dr5hn/countrystatecity-npm/workflows/Pipeline/badge.svg)](https://github.com/dr5hn/countrystatecity-npm/actions/workflows/ci.yml)
+[![CI](https://github.com/kitty-crow/countrystatecity/workflows/Pipeline/badge.svg)](https://github.com/kitty-crow/countrystatecity/actions/workflows/ci.yml)
 [![npm downloads](https://img.shields.io/npm/dm/@countrystatecity/cli?label=cli)](https://www.npmjs.com/package/@countrystatecity/cli)
 [![npm downloads](https://img.shields.io/npm/dw/@countrystatecity/cli?label=cli)](https://www.npmjs.com/package/@countrystatecity/cli)
 
@@ -196,7 +196,7 @@ csc export --json
 - [API Documentation](https://countrystatecity.in/docs/)
 - [Dashboard](https://app.countrystatecity.in)
 - [Pricing](https://app.countrystatecity.in/pricing)
-- [GitHub (monorepo)](https://github.com/dr5hn/countrystatecity-npm/tree/main/packages/cli)
+- [GitHub (monorepo)](https://github.com/kitty-crow/countrystatecity/tree/main/packages/cli)
 
 ## License
 

@@ -1,7 +1,5 @@
-import chalk from 'chalk';
-
-/** Version string sourced from the package manifest. */
-const VERSION = 'v0.1.1';
+import chalk from './ansi.ts';
+import { VERSION } from '../version.ts';
 
 /**
  * Gradient hex colors applied top-to-bottom across the five ASCII art rows.
@@ -38,11 +36,11 @@ const ASCII_ROWS = [
  */
 export function getAsciiArt(): string {
   const coloredRows = ASCII_ROWS.map((row, index) =>
-    chalk.hex(GRADIENT_COLORS[index])(row)
+    chalk.hex(GRADIENT_COLORS[index] ?? GRADIENT_COLORS[0])(row)
   );
 
   const subtitle =
-    chalk.dim('  Country State City CLI ') + chalk.dim(VERSION);
+    chalk.dim('  Country State City CLI ') + chalk.dim(`v${VERSION}`);
 
   return coloredRows.join('\n') + '\n\n' + subtitle;
 }

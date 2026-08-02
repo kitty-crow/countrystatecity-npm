@@ -1,44 +1,20 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
-vi.mock('../../src/lib/api.js', () => ({
+vi.mock('../../src/lib/api.ts', () => ({
   get: vi.fn(),
 }));
 
-vi.mock('../../src/lib/config.js', () => ({
+vi.mock('../../src/lib/config.ts', () => ({
   getApiKey: vi.fn(() => 'test-key'),
   getApiBase: vi.fn(() => 'https://api.countrystatecity.in/v1'),
 }));
 
-vi.mock('ora', () => ({
-  default: () => ({
-    start: vi.fn().mockReturnThis(),
-    stop: vi.fn(),
-    succeed: vi.fn(),
-    fail: vi.fn(),
-  }),
-}));
 
-vi.mock('chalk', () => ({
-  default: {
-    red: (s: string) => s,
-    yellow: (s: string) => s,
-    green: (s: string) => s,
-    dim: (s: string) => s,
-    cyan: (s: string) => s,
-    bold: (s: string) => s,
-  },
-}));
 
-vi.mock('cli-table3', () => ({
-  default: class {
-    push() {}
-    toString() { return 'table'; }
-  },
-}));
 
 import { Command } from 'commander';
-import { registerGetCommands } from '../../src/commands/get.js';
-import { get } from '../../src/lib/api.js';
+import { registerGetCommands } from '../../src/commands/get.ts';
+import { get } from '../../src/lib/api.ts';
 
 const mockCountryDetail = {
   id: 101,

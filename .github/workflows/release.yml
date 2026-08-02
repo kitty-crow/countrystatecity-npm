@@ -1,16 +1,14 @@
 name: Release
 
 on:
-  # Auto-trigger when an automated data-update PR is merged
   pull_request:
     types: [closed]
     branches: [main]
-  # Manual trigger for code-change releases
   workflow_dispatch:
 
 jobs:
   release:
-    name: Bump Versions & Update Changelogs
+    name: Bump versions and changelogs
     if: >-
       github.event_name == 'workflow_dispatch' ||
       (github.event.pull_request.merged == true &&
@@ -18,63 +16,20 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
-
-      - uses: pnpm/action-setup@v4
-
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
-          node-version: '20'
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Bump patch versions
-        id: bump
-        run: |
-          node -e "
-            const fs = require('fs');
-            const packages = ['countries', 'countries-browser', 'timezones', 'currencies', 'translations', 'phonecodes'];
-            for (const pkg of packages) {
-              const path = \`packages/\${pkg}/package.json\`;
-              const json = JSON.parse(fs.readFileSync(path, 'utf-8'));
-              const [major, minor, patch] = json.version.split('.').map(Number);
-              const oldVersion = json.version;
-              json.version = \`\${major}.\${minor}.\${patch + 1}\`;
-              fs.writeFileSync(path, JSON.stringify(json, null, 2) + '\n');
-              console.log(\`\${json.name}: \${oldVersion} → \${json.version}\`);
-            }
-          "
-
-      - name: Update CHANGELOGs
-        run: |
-          DATE=$(date +%Y-%m-%d)
-          for pkg in countries countries-browser timezones currencies translations phonecodes; do
-            VERSION=$(node -p "require('./packages/$pkg/package.json').version")
-            NAME=$(node -p "require('./packages/$pkg/package.json').name")
-            CHANGELOG="packages/$pkg/CHANGELOG.md"
-            ENTRY="## $VERSION\n\n### Patch Changes\n\n- Updated data from countries-states-cities-database\n\n"
-            if [ -f "$CHANGELOG" ]; then
-              TMP=$(mktemp)
-              head -1 "$CHANGELOG" > "$TMP"
-              printf "\n$ENTRY" >> "$TMP"
-              tail -n +2 "$CHANGELOG" >> "$TMP"
-              mv "$TMP" "$CHANGELOG"
-            else
-              printf "# $NAME\n\n$ENTRY" > "$CHANGELOG"
-            fi
-          done
-
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - name: Bump versions and changelogs
+        run: npm exec tsx -- scripts/release-data.ts
+      - name: Refresh npm lockfile
+        run: npm install --package-lock-only --ignore-scripts
       - name: Commit and push
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add packages/*/package.json packages/*/CHANGELOG.md
-          git commit -m "chore: release packages"
-          git push
+        run: npm exec tsx -- scripts/commit-release.ts

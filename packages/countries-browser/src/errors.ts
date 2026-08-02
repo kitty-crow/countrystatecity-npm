@@ -16,7 +16,7 @@ export class NetworkError extends Error {
     super(message);
     this.name = 'NetworkError';
     this.url = url;
-    this.statusCode = statusCode;
+    if (statusCode !== undefined) this.statusCode = statusCode;
   }
 }
 

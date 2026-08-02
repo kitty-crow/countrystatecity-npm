@@ -1,7 +1,48 @@
-node_modules
-dist
-.turbo
-coverage
+# Dependencies and package managers
+node_modules/
+packages/**/package-lock.json
+pnpm-lock.yaml
+pnpm-workspace.yaml
+yarn.lock
+bun.lock
+bun.lockb
+.pnp.*
+
+# Builds and caches
+dist/
+build/
+out/
+.next/
+.turbo/
+.cache/
+coverage/
 *.tsbuildinfo
+next-env.d.ts
+
+# Logs and temporary files
+*.log
+*.tgz
+*.tmp
+*.temp
+*.swp
+*.swo
+*.bak
+*.orig
+*.rej
+audit-report.txt
+
+# Local configuration
+.env
+.env.*
+!.env.example
+.superpowers/
+.vscode/
+.idea/
+
+# Operating systems
 .DS_Store
+Thumbs.db
+desktop.ini
+
+# Generated source download
 data/source.json

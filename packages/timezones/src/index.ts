@@ -4,7 +4,7 @@ export type {
   ITimezoneInfo,
   ITimezoneAbbreviation,
   IConvertedTime
-} from './types';
+} from './types.ts';
 
 // Export all loaders
 export {
@@ -13,7 +13,7 @@ export {
   getTimezoneInfo,
   getTimezoneAbbreviations,
   getTimezonesByAbbreviation
-} from './loaders';
+} from './loaders.ts';
 
 // Export all utilities
 export {
@@ -26,7 +26,7 @@ export {
   searchTimezones,
   getUniqueAbbreviations,
   getTimezonesByOffset
-} from './utils';
+} from './utils.ts';
 
 // Default export for convenience
-export { getTimezones as default } from './loaders';
+export { getTimezones as default } from './loaders.ts';

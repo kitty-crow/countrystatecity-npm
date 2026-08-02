@@ -18,31 +18,29 @@ jobs:
       id-token: write
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-
-      - uses: pnpm/action-setup@v4
-
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
-          node-version: '20'
-          cache: pnpm
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: package-lock.json
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: npm ci
 
       - name: Build all packages
-        run: pnpm turbo run build
+        run: npm run build
 
       - name: Publish each package
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           for pkg in countries countries-browser timezones currencies translations phonecodes cli; do
-            NAME=$(node -p "require('./packages/$pkg/package.json').name")
-            VERSION=$(node -p "require('./packages/$pkg/package.json').version")
+            NAME=$(jq -r '.name' "packages/$pkg/package.json")
+            VERSION=$(jq -r '.version' "packages/$pkg/package.json")
 
             echo "── $NAME@$VERSION ──"
 
@@ -54,7 +52,7 @@ jobs:
             else
               echo "↑ Publishing $NAME@$VERSION..."
               cd packages/$pkg
-              pnpm publish --no-git-checks --access public
+              npm publish --access public
               cd ../..
               echo "✓ $NAME@$VERSION published"
             fi
@@ -65,8 +63,8 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           for pkg in countries countries-browser timezones currencies translations phonecodes cli; do
-            NAME=$(node -p "require('./packages/$pkg/package.json').name")
-            VERSION=$(node -p "require('./packages/$pkg/package.json').version")
+            NAME=$(jq -r '.name' "packages/$pkg/package.json")
+            VERSION=$(jq -r '.version' "packages/$pkg/package.json")
             TAG="$NAME@$VERSION"
 
             # Skip if tag already exists

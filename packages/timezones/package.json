@@ -1,6 +1,6 @@
 {
   "name": "@countrystatecity/timezones",
-  "version": "1.0.7",
+  "version": "2.1.0",
   "description": "Comprehensive timezone data with conversion utilities and iOS/Safari support",
   "keywords": [
     "country-state-city",
@@ -22,14 +22,14 @@
     "lazy-loading"
   ],
   "author": "dr5hn",
-  "license": "ODbL-1.0",
+  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dr5hn/countrystatecity-npm.git"
+    "url": "git+https://github.com/kitty-crow/countrystatecity.git"
   },
-  "homepage": "https://github.com/dr5hn/countrystatecity-npm/tree/main/packages/timezones#readme",
+  "homepage": "https://github.com/kitty-crow/countrystatecity/tree/main/packages/timezones#readme",
   "bugs": {
-    "url": "https://github.com/dr5hn/countrystatecity-npm/issues"
+    "url": "https://github.com/kitty-crow/countrystatecity/issues"
   },
   "type": "module",
   "main": "./dist/index.cjs",
@@ -60,14 +60,14 @@
     "test:ios": "vitest run compatibility",
     "lint": "eslint src --ext .ts",
     "typecheck": "tsc --noEmit",
-    "generate-data": "node scripts/generate-data.cjs"
+    "generate-data": "tsx scripts/generate-data.ts"
   },
   "devDependencies": {
     "@types/node": "^20.19.19",
-    "ts-node": "^10.9.2",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3",
-    "vitest": "^4.0.16"
+    "vitest": "^4.1.10",
+    "tsx": "^4.23.1"
   },
   "publishConfig": {
     "access": "public"

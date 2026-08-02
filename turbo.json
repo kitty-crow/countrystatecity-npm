@@ -3,22 +3,30 @@
   "ui": "tui",
   "tasks": {
     "build": {
-      "outputs": ["dist/**"]
+      "outputs": [
+        "dist/**"
+      ]
     },
     "dev": {
       "persistent": true,
       "cache": false
     },
     "test": {
-      "dependsOn": ["build"],
-      "outputs": ["coverage/**"]
+      "dependsOn": [
+        "build"
+      ],
+      "cache": false
     },
     "typecheck": {
-      "dependsOn": ["^build"]
+      "dependsOn": [
+        "^build"
+      ]
     },
     "lint": {},
     "generate-data": {
-      "outputs": ["data/**"],
+      "outputs": [
+        "data/**"
+      ],
       "cache": false
     },
     "clean": {

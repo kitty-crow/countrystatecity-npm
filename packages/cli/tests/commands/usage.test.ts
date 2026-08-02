@@ -1,37 +1,19 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
-vi.mock('../../src/lib/api.js', () => ({
+vi.mock('../../src/lib/api.ts', () => ({
   get: vi.fn(),
 }));
 
-vi.mock('../../src/lib/config.js', () => ({
+vi.mock('../../src/lib/config.ts', () => ({
   getApiKey: vi.fn(() => 'test-key'),
   getApiBase: vi.fn(() => 'https://api.countrystatecity.in/v1'),
 }));
 
-vi.mock('ora', () => ({
-  default: () => ({
-    start: vi.fn().mockReturnThis(),
-    stop: vi.fn(),
-    succeed: vi.fn(),
-    fail: vi.fn(),
-  }),
-}));
 
-vi.mock('chalk', () => ({
-  default: {
-    red: (s: string) => s,
-    yellow: (s: string) => s,
-    green: (s: string) => s,
-    dim: (s: string) => s,
-    cyan: (s: string) => s,
-    bold: (s: string) => s,
-  },
-}));
 
 import { Command } from 'commander';
-import { registerUsageCommand } from '../../src/commands/usage.js';
-import { get } from '../../src/lib/api.js';
+import { registerUsageCommand } from '../../src/commands/usage.ts';
+import { get } from '../../src/lib/api.ts';
 
 describe('usage command', () => {
   let program: Command;

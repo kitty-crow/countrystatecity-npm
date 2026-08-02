@@ -1,5 +1,24 @@
-import type { ITimezone, IConvertedTime } from './types';
-import { getTimezones, getTimezoneInfo } from './loaders';
+import { getTimezoneInfo, getTimezones } from './loaders.ts';
+import type { IConvertedTime, ITimezone } from './types.ts';
+
+const local = (date: Date, zone: string): string => date.toLocaleString('en-US', { timeZone: zone });
+
+const offset = (date: Date, zone: string): number => new Date(local(date, zone)).getTimezoneOffset();
+
+const iso = (date: Date, zone: string): string => {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: zone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  }).formatToParts(date);
+  const part = (type: Intl.DateTimeFormatPartTypes): string => parts.find(item => item.type === type)?.value ?? '00';
+  return `${part('year')}-${part('month')}-${part('day')}T${part('hour')}:${part('minute')}:${part('second')}`;
+};
 
 /**
  * Convert time from one timezone to another
@@ -11,41 +30,16 @@ import { getTimezones, getTimezoneInfo } from './loaders';
 export async function convertTime(
   time: string | Date,
   fromTimezone: string,
-  toTimezone: string
+  toTimezone: string,
 ): Promise<IConvertedTime> {
-  const inputDate = typeof time === 'string' ? new Date(time) : time;
-
-  // Format a date as a local ISO-like string (YYYY-MM-DDTHH:mm:ss) in the given timezone
-  const formatInTZ = (date: Date, timezone: string): string => {
-    const parts = new Intl.DateTimeFormat('en-CA', {
-      timeZone: timezone,
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false,
-    }).formatToParts(date);
-    const get = (type: string) => parts.find((p) => p.type === type)?.value ?? '00';
-    return `${get('year')}-${get('month')}-${get('day')}T${get('hour')}:${get('minute')}:${get('second')}`;
-  };
-
-  // Wall-clock strings in each timezone for computing the offset difference.
-  // Parsing these locale strings as local time is wrong for absolute timestamps,
-  // but the *difference* between the two wall-clock times always equals the
-  // timezone-offset gap, regardless of the runtime's local timezone.
-  const fromWall = inputDate.toLocaleString('en-US', { timeZone: fromTimezone });
-  const toWall = inputDate.toLocaleString('en-US', { timeZone: toTimezone });
-  const timeDiff =
-    (new Date(toWall).getTime() - new Date(fromWall).getTime()) / (1000 * 60 * 60);
-
+  const date = typeof time === 'string' ? new Date(time) : time;
+  const timeDifference = (new Date(local(date, toTimezone)).getTime() - new Date(local(date, fromTimezone)).getTime()) / 3_600_000;
   return {
-    originalTime: formatInTZ(inputDate, fromTimezone),
+    originalTime: iso(date, fromTimezone),
     fromTimezone,
-    convertedTime: formatInTZ(inputDate, toTimezone),
+    convertedTime: iso(date, toTimezone),
     toTimezone,
-    timeDifference: timeDiff,
+    timeDifference,
   };
 }
 
@@ -56,9 +50,7 @@ export async function convertTime(
  */
 export async function getCurrentTime(timezoneName: string): Promise<string> {
   const info = await getTimezoneInfo(timezoneName);
-  if (!info) {
-    throw new Error(`Timezone ${timezoneName} not found`);
-  }
+  if (!info) throw new Error(`Timezone ${timezoneName} not found`);
   return info.currentTime;
 }
 
@@ -70,26 +62,11 @@ export async function getCurrentTime(timezoneName: string): Promise<string> {
  */
 export async function isDaylightSaving(
   timezoneName: string,
-  date: Date = new Date()
+  date: Date = new Date(),
 ): Promise<boolean> {
-  // Get offsets for January and July to determine standard time
   const year = date.getFullYear();
-  const january = new Date(year, 0, 1);
-  const july = new Date(year, 6, 1);
-  
-  const janStr = january.toLocaleString('en-US', { timeZone: timezoneName });
-  const julStr = july.toLocaleString('en-US', { timeZone: timezoneName });
-  const dateStr = date.toLocaleString('en-US', { timeZone: timezoneName });
-  
-  const janOffset = new Date(janStr).getTimezoneOffset();
-  const julOffset = new Date(julStr).getTimezoneOffset();
-  const dateOffset = new Date(dateStr).getTimezoneOffset();
-  
-  // Standard time is when offset is maximum (most positive)
-  const standardOffset = Math.max(janOffset, julOffset);
-  
-  // DST is active when current offset is less than standard offset
-  return dateOffset < standardOffset;
+  const standard = Math.max(offset(new Date(year, 0, 1), timezoneName), offset(new Date(year, 6, 1), timezoneName));
+  return offset(date, timezoneName) < standard;
 }
 
 /**
@@ -99,9 +76,7 @@ export async function isDaylightSaving(
  */
 export async function getGMTOffset(timezoneName: string): Promise<number> {
   const info = await getTimezoneInfo(timezoneName);
-  if (!info) {
-    throw new Error(`Timezone ${timezoneName} not found`);
-  }
+  if (!info) throw new Error(`Timezone ${timezoneName} not found`);
   return info.gmtOffset;
 }
 
@@ -111,10 +86,10 @@ export async function getGMTOffset(timezoneName: string): Promise<number> {
  * @returns Formatted offset string
  */
 export function formatGMTOffset(offsetSeconds: number): string {
-  const hours = Math.floor(Math.abs(offsetSeconds) / 3600);
-  const minutes = Math.floor((Math.abs(offsetSeconds) % 3600) / 60);
+  const value = Math.abs(offsetSeconds);
+  const hours = Math.floor(value / 3600);
+  const minutes = Math.floor((value % 3600) / 60);
   const sign = offsetSeconds >= 0 ? '+' : '-';
-  
   return `UTC${sign}${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
 }
 
@@ -124,8 +99,7 @@ export function formatGMTOffset(offsetSeconds: number): string {
  * @returns Promise resolving to true if valid
  */
 export async function isValidTimezone(timezoneName: string): Promise<boolean> {
-  const timezones = await getTimezones();
-  return timezones.some(tz => tz.zoneName === timezoneName);
+  return (await getTimezones()).some(item => item.zoneName === timezoneName);
 }
 
 /**
@@ -134,14 +108,10 @@ export async function isValidTimezone(timezoneName: string): Promise<boolean> {
  * @returns Promise resolving to matching timezones
  */
 export async function searchTimezones(searchTerm: string): Promise<ITimezone[]> {
-  const timezones = await getTimezones();
-  const lowerSearch = searchTerm.toLowerCase();
-  
-  return timezones.filter(tz => 
-    tz.zoneName.toLowerCase().includes(lowerSearch) ||
-    tz.tzName.toLowerCase().includes(lowerSearch) ||
-    tz.abbreviation.toLowerCase().includes(lowerSearch)
-  );
+  const key = searchTerm.toLowerCase();
+  return (await getTimezones()).filter(item => item.zoneName.toLowerCase().includes(key)
+    || item.tzName.toLowerCase().includes(key)
+    || item.abbreviation.toLowerCase().includes(key));
 }
 
 /**
@@ -149,9 +119,7 @@ export async function searchTimezones(searchTerm: string): Promise<ITimezone[]> 
  * @returns Promise resolving to array of unique abbreviations
  */
 export async function getUniqueAbbreviations(): Promise<string[]> {
-  const timezones = await getTimezones();
-  const abbreviations = new Set(timezones.map(tz => tz.abbreviation));
-  return Array.from(abbreviations).sort();
+  return [...new Set((await getTimezones()).map(item => item.abbreviation))].sort();
 }
 
 /**
@@ -160,6 +128,5 @@ export async function getUniqueAbbreviations(): Promise<string[]> {
  * @returns Promise resolving to timezones with matching offset
  */
 export async function getTimezonesByOffset(offsetSeconds: number): Promise<ITimezone[]> {
-  const timezones = await getTimezones();
-  return timezones.filter(tz => tz.gmtOffset === offsetSeconds);
+  return (await getTimezones()).filter(item => item.gmtOffset === offsetSeconds);
 }

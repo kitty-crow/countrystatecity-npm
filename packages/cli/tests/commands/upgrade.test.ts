@@ -1,41 +1,14 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('../../src/lib/config.js', () => ({
-  getApiKey: vi.fn(),
-  getApiBase: vi.fn(() => 'https://api.countrystatecity.in/v1'),
-}));
-
-vi.mock('../../src/lib/api.js', () => ({
-  validateKey: vi.fn(),
-}));
-
-vi.mock('open', () => ({
-  default: vi.fn(),
-}));
-
-vi.mock('chalk', () => ({
-  default: {
-    red: (s: string) => s,
-    yellow: (s: string) => s,
-    green: (s: string) => s,
-    dim: (s: string) => s,
-    cyan: (s: string) => s,
-    bold: (s: string) => s,
-  },
-}));
-
-vi.mock('cli-table3', () => ({
-  default: class {
-    push() {}
-    toString() { return 'table'; }
-  },
-}));
+vi.mock('../../src/lib/config.ts', () => ({ getApiKey: vi.fn() }));
+vi.mock('../../src/lib/api.ts', () => ({ validateKey: vi.fn() }));
+vi.mock('../../src/lib/browser.ts', () => ({ openUrl: vi.fn() }));
 
 import { Command } from 'commander';
-import { registerUpgradeCommand } from '../../src/commands/upgrade.js';
-import { getApiKey } from '../../src/lib/config.js';
-import { validateKey } from '../../src/lib/api.js';
-import open from 'open';
+import { registerUpgradeCommand } from '../../src/commands/upgrade.ts';
+import { validateKey } from '../../src/lib/api.ts';
+import { openUrl } from '../../src/lib/browser.ts';
+import { getApiKey } from '../../src/lib/config.ts';
 
 describe('upgrade command', () => {
   let program: Command;
@@ -47,40 +20,25 @@ describe('upgrade command', () => {
     registerUpgradeCommand(program);
   });
 
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
+  afterEach(() => vi.restoreAllMocks());
 
-  it('shows current plan when authenticated', async () => {
+  it('shows the current plan when authenticated', async () => {
     vi.mocked(getApiKey).mockReturnValue('test-key');
     vi.mocked(validateKey).mockResolvedValue({
       valid: true,
       usage: { dailyUsed: 10, dailyLimit: 1000, monthlyUsed: 100, monthlyLimit: 30000 },
     });
-    const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-
+    const log = vi.spyOn(console, 'log').mockImplementation(() => {});
     await program.parseAsync(['node', 'csc', 'upgrade']);
-
-    expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('Supporter'));
-    expect(open).toHaveBeenCalledWith('https://app.countrystatecity.in/pricing');
+    expect(log).toHaveBeenCalledWith(expect.stringContaining('Supporter'));
+    expect(openUrl).toHaveBeenCalledWith('https://app.countrystatecity.in/pricing');
   });
 
-  it('shows plans without current plan when unauthenticated', async () => {
+  it('shows plans and opens pricing when unauthenticated', async () => {
     vi.mocked(getApiKey).mockReturnValue(undefined);
-    const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-
+    const log = vi.spyOn(console, 'log').mockImplementation(() => {});
     await program.parseAsync(['node', 'csc', 'upgrade']);
-
-    expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('Available plans'));
-    expect(open).toHaveBeenCalled();
-  });
-
-  it('opens pricing page in browser', async () => {
-    vi.mocked(getApiKey).mockReturnValue(undefined);
-    vi.spyOn(console, 'log').mockImplementation(() => {});
-
-    await program.parseAsync(['node', 'csc', 'upgrade']);
-
-    expect(open).toHaveBeenCalledWith('https://app.countrystatecity.in/pricing');
+    expect(log).toHaveBeenCalledWith(expect.stringContaining('Available plans'));
+    expect(openUrl).toHaveBeenCalledWith('https://app.countrystatecity.in/pricing');
   });
 });

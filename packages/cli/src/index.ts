@@ -1,16 +1,17 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
-import { registerAuthCommands } from './commands/auth.js';
-import { registerSearchCommands } from './commands/search.js';
-import { registerGetCommands } from './commands/get.js';
-import { registerUsageCommand } from './commands/usage.js';
-import { registerUpgradeCommand } from './commands/upgrade.js';
-import { registerGenerateCommands } from './commands/generate.js';
-import { registerExploreCommand } from './commands/explore.js';
-import { registerExportCommand } from './commands/export.js';
-import { getBrandedHelp } from './lib/branding.js';
-import { isRootHelpRequested, shouldShowBrandedHelp } from './lib/root-help.js';
+import { registerAuthCommands } from './commands/auth.ts';
+import { registerSearchCommands } from './commands/search.ts';
+import { registerGetCommands } from './commands/get.ts';
+import { registerUsageCommand } from './commands/usage.ts';
+import { registerUpgradeCommand } from './commands/upgrade.ts';
+import { registerGenerateCommands } from './commands/generate.ts';
+import { registerExploreCommand } from './commands/explore.ts';
+import { registerExportCommand } from './commands/export.ts';
+import { getBrandedHelp } from './lib/branding.ts';
+import { isRootHelpRequested, shouldShowBrandedHelp } from './lib/root-help.ts';
+import { VERSION } from './version.ts';
 
 /**
  * Prints branded help to stdout and exits cleanly with code 0.
@@ -29,7 +30,7 @@ program.addHelpCommand(false);
 program
   .name('csc')
   .description('Official CLI for the Country State City API')
-  .version('0.1.1')
+  .version(VERSION)
   .helpOption('-h, --help', 'Display help for csc')
   // Global output flags available to every sub-command via optsWithGlobals().
   .option('--json', 'Output raw JSON instead of formatted tables', false)

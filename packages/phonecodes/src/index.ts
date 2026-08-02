@@ -1,4 +1,4 @@
-export type { IPhonecode } from './types.js';
+export type { IPhonecode } from './types.ts';
 
 export {
   getPhonecodes,
@@ -6,12 +6,12 @@ export {
   getCountriesByDialCode,
   isValidDialCode,
   searchPhonecodes,
-} from './loaders.js';
+} from './loaders.ts';
 
 export {
   getDialCode,
   getPhonecode,
   formatWithDialCode,
-} from './utils.js';
+} from './utils.ts';
 
-export { getPhonecodes as default } from './loaders.js';
+export { getPhonecodes as default } from './loaders.ts';

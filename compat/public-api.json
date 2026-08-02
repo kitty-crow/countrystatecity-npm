@@ -1,0 +1,8 @@
+{
+  "countries": ["default", "getAllCitiesInWorld", "getAllCitiesOfCountry", "getCitiesOfState", "getCityById", "getCountries", "getCountryByCode", "getCountryNameByCode", "getCountryTimezones", "getStateByCode", "getStateNameByCode", "getStatesOfCountry", "getTimezoneForCity", "isValidCountryCode", "isValidStateCode", "searchCitiesByName"],
+  "countries-browser": ["NetworkError", "TimeoutError", "clearCache", "configure", "getAllCitiesInWorld", "getAllCitiesOfCountry", "getCitiesOfState", "getCityById", "getCountries", "getCountryByCode", "getCountryNameByCode", "getCountryTimezones", "getStateByCode", "getStateNameByCode", "getStatesOfCountry", "getTimezoneForCity", "isValidCountryCode", "isValidStateCode", "resetConfiguration", "searchCitiesByName"],
+  "timezones": ["convertTime", "default", "formatGMTOffset", "getCurrentTime", "getGMTOffset", "getTimezoneAbbreviations", "getTimezoneInfo", "getTimezones", "getTimezonesByAbbreviation", "getTimezonesByCountry", "getTimezonesByOffset", "getUniqueAbbreviations", "isDaylightSaving", "isValidTimezone", "searchTimezones"],
+  "currencies": ["default", "formatCurrencyAmount", "getCurrencies", "getCurrenciesByCountry", "getCurrencyByCode", "getCurrencyBySymbol", "getCurrencySymbol", "getCurrencySymbolNative", "isValidCurrencyCode", "searchCurrencies"],
+  "translations": ["getCountryTranslations", "getLocales", "getTranslation", "getTranslationOrFallback", "getTranslations", "searchByTranslatedName"],
+  "phonecodes": ["default", "formatWithDialCode", "getCountriesByDialCode", "getDialCode", "getPhonecode", "getPhonecodeByCountry", "getPhonecodes", "isValidDialCode", "searchPhonecodes"]
+}

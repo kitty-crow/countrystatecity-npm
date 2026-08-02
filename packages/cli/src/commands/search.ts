@@ -1,9 +1,10 @@
 import { Command } from 'commander';
-import chalk from 'chalk';
-import { get } from '../lib/api.js';
-import { printTable, printJson } from '../lib/display.js';
-import { printUsageFooter } from '../lib/usage-footer.js';
-import { createSpinner, type GlobalFlags } from '../lib/output.js';
+import chalk from '../lib/ansi.ts';
+import { get } from '../lib/api.ts';
+import { printTable, printJson } from '../lib/display.ts';
+import { printUsageFooter } from '../lib/usage-footer.ts';
+import { createSpinner } from '../lib/output.ts';
+import { getFlags } from '../lib/flags.ts';
 
 interface Country {
   id: number;
@@ -36,11 +37,6 @@ interface Region {
 }
 
 
-function resolveFlags(cmd: Command): GlobalFlags {
-  const g = cmd.optsWithGlobals();
-  return { json: g.json ?? false, quiet: g.quiet ?? false, noFooter: g.footer === false };
-}
-
 /**
  * Registers search subcommands: countries, states, cities, regions,
  * currencies, timezones, phonecodes, and global search.
@@ -54,7 +50,7 @@ export function registerSearchCommands(program: Command): void {
     .description('List all countries')
     .option('--filter <text>', 'Filter by name')
     .action(async (options: { filter?: string }, cmd: Command) => {
-      const flags = resolveFlags(cmd);
+      const flags = getFlags(cmd);
       const spinner = await createSpinner('Fetching countries...', flags);
       const { data, usage } = await get<Country[]>('/countries');
       spinner.stop();
@@ -90,7 +86,7 @@ export function registerSearchCommands(program: Command): void {
     .option('-c, --country <iso2>', 'Country ISO2 code (omit to get all states globally)')
     .option('--filter <text>', 'Filter by name')
     .action(async (options: { country?: string; filter?: string }, cmd: Command) => {
-      const flags = resolveFlags(cmd);
+      const flags = getFlags(cmd);
       const code = options.country?.toUpperCase();
       const endpoint = code ? `/countries/${code}/states` : '/states';
       const spinner = await createSpinner(code ? `Fetching states for ${code}...` : 'Fetching all states...', flags);
@@ -125,7 +121,7 @@ export function registerSearchCommands(program: Command): void {
     .option('-s, --state <iso2>', 'State ISO2 code')
     .option('--filter <text>', 'Filter by name')
     .action(async (options: { country?: string; state?: string; filter?: string }, cmd: Command) => {
-      const flags = resolveFlags(cmd);
+      const flags = getFlags(cmd);
       const countryCode = options.country?.toUpperCase();
       const stateCode = options.state?.toUpperCase();
 
@@ -175,7 +171,7 @@ export function registerSearchCommands(program: Command): void {
     .description('List all world regions')
     .option('--filter <text>', 'Filter by name')
     .action(async (options: { filter?: string }, cmd: Command) => {
-      const flags = resolveFlags(cmd);
+      const flags = getFlags(cmd);
       const spinner = await createSpinner('Fetching regions...', flags);
       const { data, usage } = await get<Region[]>('/regions');
       spinner.stop();
@@ -197,10 +193,10 @@ export function registerSearchCommands(program: Command): void {
   // ── global search ──────────────────────────────────────────────────────────
   search
     .argument('[query]', 'Search term to match country names')
-    .action(async (query: string | undefined, options: Record<string, unknown>, cmd: Command) => {
+    .action(async (query: string | undefined, _options: Record<string, unknown>, cmd: Command) => {
       if (!query) return;
 
-      const flags = resolveFlags(cmd);
+      const flags = getFlags(cmd);
       const spinner = await createSpinner('Searching...', flags);
       const { data, usage } = await get<Country[]>('/countries');
       spinner.stop();

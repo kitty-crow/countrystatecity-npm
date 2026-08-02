@@ -1,9 +1,10 @@
 import { Command } from 'commander';
-import chalk from 'chalk';
-import { get } from '../lib/api.js';
-import { printJson, printDetail } from '../lib/display.js';
-import { printUsageFooter } from '../lib/usage-footer.js';
-import { createSpinner, isTTY, promptCountry, promptState, type GlobalFlags } from '../lib/output.js';
+import chalk from '../lib/ansi.ts';
+import { get } from '../lib/api.ts';
+import { printJson, printDetail } from '../lib/display.ts';
+import { printUsageFooter } from '../lib/usage-footer.ts';
+import { createSpinner, isTTY, promptCountry, promptState } from '../lib/output.ts';
+import { getFlags } from '../lib/flags.ts';
 
 interface CountrySummary {
   id: number;
@@ -94,13 +95,8 @@ export function registerGetCommands(program: Command): void {
   getCmd
     .command('country [iso2]')
     .description('Get detailed country information')
-    .action(async (iso2: string | undefined, options: Record<string, unknown>, cmd: Command) => {
-      const globalOpts = cmd.optsWithGlobals();
-      const flags: GlobalFlags = {
-        json: globalOpts.json ?? false,
-        quiet: globalOpts.quiet ?? false,
-        noFooter: globalOpts.footer === false,
-      };
+    .action(async (iso2: string | undefined, _options: Record<string, unknown>, cmd: Command) => {
+      const flags = getFlags(cmd);
 
       let code: string;
       if (iso2) {
@@ -145,13 +141,8 @@ export function registerGetCommands(program: Command): void {
   getCmd
     .command('state [country_iso2] [state_iso2]')
     .description('Get detailed state information')
-    .action(async (countryIso2: string | undefined, stateIso2: string | undefined, options: Record<string, unknown>, cmd: Command) => {
-      const globalOpts = cmd.optsWithGlobals();
-      const flags: GlobalFlags = {
-        json: globalOpts.json ?? false,
-        quiet: globalOpts.quiet ?? false,
-        noFooter: globalOpts.footer === false,
-      };
+    .action(async (countryIso2: string | undefined, stateIso2: string | undefined, _options: Record<string, unknown>, cmd: Command) => {
+      const flags = getFlags(cmd);
 
       let countryCode: string;
       if (countryIso2) {
