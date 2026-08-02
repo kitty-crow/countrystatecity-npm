@@ -17,6 +17,17 @@ jobs:
           node-version: '24'
           package-manager-cache: false
 
+      - name: Inventory native replacement candidates
+        run: |
+          echo '=== imports ==='
+          grep -RInE --include='*.ts' "from '(axios|conf|open|chalk|ora|cli-table3)'" packages/cli/src packages/cli/tests || true
+          echo '=== chalk methods ==='
+          grep -RhoE --include='*.ts' 'chalk\.[A-Za-z]+' packages/cli/src packages/cli/tests | sort -u || true
+          echo '=== ora usage ==='
+          grep -RInE --include='*.ts' '(ora\(|Ora|spinner\.)' packages/cli/src packages/cli/tests || true
+          echo '=== table usage ==='
+          grep -RInE --include='*.ts' '(Table\(|cli-table3|printTable)' packages/cli/src packages/cli/tests || true
+
       - name: Install pnpm
         run: npm install --global pnpm@9.15.9
 
