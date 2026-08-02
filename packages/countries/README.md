@@ -1,7 +1,7 @@
 # @countrystatecity/countries
 
 [![npm](https://img.shields.io/npm/v/@countrystatecity/countries)](https://www.npmjs.com/package/@countrystatecity/countries)
-[![CI](https://github.com/kitty-crow/countrystatecity-npm/workflows/Pipeline/badge.svg)](https://github.com/kitty-crow/countrystatecity-npm/actions/workflows/ci.yml)
+[![CI](https://github.com/kitty-crow/countrystatecity/workflows/Pipeline/badge.svg)](https://github.com/kitty-crow/countrystatecity/actions/workflows/ci.yml)
 [![npm downloads](https://img.shields.io/npm/dm/@countrystatecity/countries?label=countries)](https://www.npmjs.com/package/@countrystatecity/countries)
 [![npm downloads](https://img.shields.io/npm/dw/@countrystatecity/countries?label=countries)](https://www.npmjs.com/package/@countrystatecity/countries)
 
@@ -42,7 +42,7 @@ npm install @countrystatecity/countries
 # or
 yarn add @countrystatecity/countries
 # or
-pnpm add @countrystatecity/countries
+npm install @countrystatecity/countries
 ```
 
 > **⚠️ Server-Side Only**: This package requires Node.js file system access and cannot be used in browser environments. For frontend use, install [`@countrystatecity/countries-browser`](https://www.npmjs.com/package/@countrystatecity/countries-browser) instead — same API, works in React/Vue/Svelte/Vite.
@@ -209,7 +209,7 @@ Contributions are welcome! Please open an issue or PR.
 
 ## 📦 Package Ecosystem
 
-This package is part of the [@countrystatecity package ecosystem](https://github.com/kitty-crow/countrystatecity-npm):
+This package is part of the [@countrystatecity package ecosystem](https://github.com/kitty-crow/countrystatecity):
 
 - **[@countrystatecity/countries](https://www.npmjs.com/package/@countrystatecity/countries)** (This package) — Server-side countries, states, and cities database. Environment: Node.js, Next.js API routes, Express. Bundle: <10KB initial load.
 
@@ -244,7 +244,7 @@ const cities = await getCitiesOfState('US', 'CA');
 
 ## 🔗 Links
 
-- [GitHub Repository](https://github.com/kitty-crow/countrystatecity-npm/tree/main/packages/countries)
-- [Issues](https://github.com/kitty-crow/countrystatecity-npm/issues)
+- [GitHub Repository](https://github.com/kitty-crow/countrystatecity/tree/main/packages/countries)
+- [Issues](https://github.com/kitty-crow/countrystatecity/issues)
 - [NPM Package](https://www.npmjs.com/package/@countrystatecity/countries)
 - [NPM Organization](https://www.npmjs.com/org/countrystatecity)

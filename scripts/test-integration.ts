@@ -15,7 +15,7 @@ const main = async (): Promise<void> => {
   const fixture = resolve(root, fixtureName);
   const pkg = resolve(root, packageName);
   if (!existsSync(join(pkg, 'dist'))) {
-    throw new Error(`${packageName} is not built; run pnpm build first`);
+    throw new Error(`${packageName} is not built; run npm run build first`);
   }
 
   console.log(`Testing ${label}`);

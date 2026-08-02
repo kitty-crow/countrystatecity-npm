@@ -17,8 +17,8 @@ This test verifies that the package:
 1. Build the main package first:
    ```bash
    cd ../../packages/countries
-   pnpm install
-   pnpm build
+   npm install
+   npm run build
    ```
 
 ### Run the Test

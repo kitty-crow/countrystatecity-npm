@@ -4,12 +4,6 @@ import { describe, it, expect, vi } from 'vitest';
  * Mock chalk to pass through all text unchanged so tests can assert on
  * raw string content without ANSI escape sequences.
  */
-vi.mock('chalk', () => ({
-  default: {
-    hex: (_color: string) => (s: string) => s,
-    dim: (s: string) => s,
-  },
-}));
 
 import { getAsciiArt, getBrandedHelp } from '../../src/lib/branding.ts';
 

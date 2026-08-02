@@ -9,33 +9,8 @@ vi.mock('../../src/lib/config.ts', () => ({
   getApiBase: vi.fn(() => 'https://api.countrystatecity.in/v1'),
 }));
 
-vi.mock('ora', () => ({
-  default: () => ({
-    start: vi.fn().mockReturnThis(),
-    stop: vi.fn(),
-    succeed: vi.fn(),
-    fail: vi.fn(),
-    set text(_v: string) {},
-  }),
-}));
 
-vi.mock('chalk', () => ({
-  default: {
-    red: (s: string) => s,
-    yellow: (s: string) => s,
-    green: (s: string) => s,
-    dim: (s: string) => s,
-    cyan: (s: string) => s,
-    bold: (s: string) => s,
-  },
-}));
 
-vi.mock('cli-table3', () => ({
-  default: class {
-    push() {}
-    toString() { return 'table'; }
-  },
-}));
 
 vi.mock('../../src/lib/output.ts', async (importOriginal) => {
   const actual = await importOriginal<typeof import('../../src/lib/output.ts')>();

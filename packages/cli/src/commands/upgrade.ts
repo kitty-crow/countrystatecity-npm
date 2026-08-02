@@ -1,6 +1,6 @@
 import { Command } from 'commander';
-import chalk from 'chalk';
-import open from 'open';
+import chalk from '../lib/ansi.ts';
+import { openUrl } from '../lib/browser.ts';
 import { getApiKey } from '../lib/config.ts';
 import { validateKey } from '../lib/api.ts';
 import { getTierName, printUsageFooter } from '../lib/usage-footer.ts';
@@ -66,6 +66,6 @@ export function registerUpgradeCommand(program: Command): void {
       printUsageFooter(usage, flags);
 
       console.log(`\n${chalk.dim('Opening pricing page...')}`);
-      await open('https://app.countrystatecity.in/pricing');
+      await openUrl('https://app.countrystatecity.in/pricing');
     });
 }

@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import chalk from 'chalk';
+import chalk from '../lib/ansi.ts';
 import { get } from '../lib/api.ts';
 import {
   progressBar,

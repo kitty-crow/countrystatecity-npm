@@ -1,7 +1,7 @@
 import { Command } from 'commander';
-import chalk from 'chalk';
-import readline from 'readline';
-import { Writable } from 'stream';
+import chalk from '../lib/ansi.ts';
+import readline from 'node:readline';
+import { Writable } from 'node:stream';
 import { getApiKey, setApiKey, clearApiKey } from '../lib/config.ts';
 import { validateKey } from '../lib/api.ts';
 import { getTierName, formatNumber } from '../lib/usage-footer.ts';

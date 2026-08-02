@@ -1,7 +1,7 @@
 # @countrystatecity/translations
 
 [![npm](https://img.shields.io/npm/v/@countrystatecity/translations)](https://www.npmjs.com/package/@countrystatecity/translations)
-[![CI](https://github.com/kitty-crow/countrystatecity-npm/workflows/Pipeline/badge.svg)](https://github.com/kitty-crow/countrystatecity-npm/actions/workflows/ci.yml)
+[![CI](https://github.com/kitty-crow/countrystatecity/workflows/Pipeline/badge.svg)](https://github.com/kitty-crow/countrystatecity/actions/workflows/ci.yml)
 [![npm downloads](https://img.shields.io/npm/dm/@countrystatecity/translations?label=translations)](https://www.npmjs.com/package/@countrystatecity/translations)
 [![npm downloads](https://img.shields.io/npm/dw/@countrystatecity/translations?label=translations)](https://www.npmjs.com/package/@countrystatecity/translations)
 
@@ -25,7 +25,7 @@ npm install @countrystatecity/translations
 # or
 yarn add @countrystatecity/translations
 # or
-pnpm add @countrystatecity/translations
+npm install @countrystatecity/translations
 ```
 
 ## 🚀 Quick Start
@@ -293,7 +293,7 @@ Contributions are welcome! Please open an issue or PR.
 
 ## 📦 Package Ecosystem
 
-This package is part of the [@countrystatecity package ecosystem](https://github.com/kitty-crow/countrystatecity-npm):
+This package is part of the [@countrystatecity package ecosystem](https://github.com/kitty-crow/countrystatecity):
 
 - **[@countrystatecity/countries](https://www.npmjs.com/package/@countrystatecity/countries)** — Server-side countries, states, and cities database. Bundle: <10KB initial load.
 
@@ -305,7 +305,7 @@ This package is part of the [@countrystatecity package ecosystem](https://github
 
 ## 🔗 Links
 
-- [GitHub Repository](https://github.com/kitty-crow/countrystatecity-npm/tree/main/packages/translations)
-- [Issues](https://github.com/kitty-crow/countrystatecity-npm/issues)
+- [GitHub Repository](https://github.com/kitty-crow/countrystatecity/tree/main/packages/translations)
+- [Issues](https://github.com/kitty-crow/countrystatecity/issues)
 - [NPM Package](https://www.npmjs.com/package/@countrystatecity/translations)
 - [NPM Organization](https://www.npmjs.com/org/countrystatecity)

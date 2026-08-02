@@ -11,25 +11,7 @@ vi.mock('../../src/lib/api.ts', () => ({
   validateKey: vi.fn(),
 }));
 
-vi.mock('ora', () => ({
-  default: () => ({
-    start: vi.fn().mockReturnThis(),
-    stop: vi.fn(),
-    succeed: vi.fn(),
-    fail: vi.fn(),
-  }),
-}));
 
-vi.mock('chalk', () => ({
-  default: {
-    red: (s: string) => s,
-    yellow: (s: string) => s,
-    green: (s: string) => s,
-    dim: (s: string) => s,
-    cyan: (s: string) => s,
-    bold: (s: string) => s,
-  },
-}));
 
 import { Command } from 'commander';
 import { registerAuthCommands } from '../../src/commands/auth.ts';

@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import chalk from 'chalk';
+import chalk from '../lib/ansi.ts';
 import { mkdir, writeFile } from 'fs/promises';
 import { join } from 'path';
 import { get, type UsageInfo } from '../lib/api.ts';

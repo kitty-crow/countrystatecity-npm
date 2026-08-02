@@ -1,39 +1,20 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { clearApiKey, getApiBase, getApiKey, isAuthenticated, setApiKey } from '../../src/lib/config.ts';
 
-// Mock the conf module before importing config
-vi.mock('conf', () => {
-  const store: Record<string, unknown> = {};
-  return {
-    default: class MockConf {
-      constructor() {}
-      get(key: string) {
-        return store[key] ?? (key === 'apiBase' ? 'https://api.countrystatecity.in/v1' : '');
-      }
-      set(key: string, value: unknown) {
-        store[key] = value;
-      }
-      delete(key: string) {
-        delete store[key];
-      }
-      // expose store for test reset
-      static _store = store;
-      static _reset() {
-        for (const key of Object.keys(store)) delete store[key];
-      }
-    },
-  };
-});
-
-import { getApiKey, setApiKey, clearApiKey, getApiBase, isAuthenticated } from '../../src/lib/config.ts';
-import Conf from 'conf';
+let dir = '';
 
 describe('config', () => {
   beforeEach(() => {
-    (Conf as unknown as { _reset: () => void })._reset();
+    dir = mkdtempSync(join(tmpdir(), 'csc-config-'));
+    process.env['CSC_CONFIG_DIR'] = dir;
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    delete process.env['CSC_CONFIG_DIR'];
+    rmSync(dir, { force: true, recursive: true });
   });
 
   it('returns undefined when no API key is set', () => {
@@ -55,11 +36,8 @@ describe('config', () => {
     expect(getApiBase()).toBe('https://api.countrystatecity.in/v1');
   });
 
-  it('returns false when not authenticated', () => {
+  it('reports authentication state', () => {
     expect(isAuthenticated()).toBe(false);
-  });
-
-  it('returns true when authenticated', () => {
     setApiKey('test-key-123');
     expect(isAuthenticated()).toBe(true);
   });

@@ -1,7 +1,7 @@
 # @countrystatecity/countries-browser
 
 [![npm](https://img.shields.io/npm/v/@countrystatecity/countries-browser)](https://www.npmjs.com/package/@countrystatecity/countries-browser)
-[![CI](https://github.com/kitty-crow/countrystatecity-npm/workflows/Pipeline/badge.svg)](https://github.com/kitty-crow/countrystatecity-npm/actions/workflows/ci.yml)
+[![CI](https://github.com/kitty-crow/countrystatecity/workflows/Pipeline/badge.svg)](https://github.com/kitty-crow/countrystatecity/actions/workflows/ci.yml)
 [![npm downloads](https://img.shields.io/npm/dm/@countrystatecity/countries-browser?label=countries-browser)](https://www.npmjs.com/package/@countrystatecity/countries-browser)
 [![npm downloads](https://img.shields.io/npm/dw/@countrystatecity/countries-browser?label=countries-browser)](https://www.npmjs.com/package/@countrystatecity/countries-browser)
 
@@ -27,7 +27,7 @@ npm install @countrystatecity/countries-browser
 # or
 yarn add @countrystatecity/countries-browser
 # or
-pnpm add @countrystatecity/countries-browser
+npm install @countrystatecity/countries-browser
 ```
 
 ## 🚀 Quick Start
@@ -280,7 +280,7 @@ Contributions are welcome! Please open an issue or PR.
 
 ## 📦 Package Ecosystem
 
-This package is part of the [@countrystatecity package ecosystem](https://github.com/kitty-crow/countrystatecity-npm):
+This package is part of the [@countrystatecity package ecosystem](https://github.com/kitty-crow/countrystatecity):
 
 - **[@countrystatecity/countries](https://www.npmjs.com/package/@countrystatecity/countries)** — Server-side countries, states, and cities database. Environment: Node.js, Next.js API routes, Express. Bundle: <10KB initial load.
 
@@ -290,7 +290,7 @@ This package is part of the [@countrystatecity package ecosystem](https://github
 
 ## 🔗 Links
 
-- [GitHub Repository](https://github.com/kitty-crow/countrystatecity-npm/tree/main/packages/countries-browser)
-- [Issues](https://github.com/kitty-crow/countrystatecity-npm/issues)
+- [GitHub Repository](https://github.com/kitty-crow/countrystatecity/tree/main/packages/countries-browser)
+- [Issues](https://github.com/kitty-crow/countrystatecity/issues)
 - [NPM Package](https://www.npmjs.com/package/@countrystatecity/countries-browser)
 - [NPM Organization](https://www.npmjs.com/org/countrystatecity)

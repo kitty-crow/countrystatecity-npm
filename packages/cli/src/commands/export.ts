@@ -1,6 +1,6 @@
 import { Command } from 'commander';
-import chalk from 'chalk';
-import open from 'open';
+import chalk from '../lib/ansi.ts';
+import { openUrl } from '../lib/browser.ts';
 import { getFlags } from '../lib/flags.ts';
 
 /** URL for the CountryStateCity online export tool. */
@@ -20,6 +20,6 @@ export function registerExportCommand(program: Command): void {
 
       console.log(chalk.dim('Opening the CountryStateCity export tool...'));
       console.log(chalk.dim(`URL: ${EXPORT_URL}`));
-      await open(EXPORT_URL);
+      await openUrl(EXPORT_URL);
     });
 }

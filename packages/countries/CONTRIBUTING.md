@@ -155,7 +155,7 @@ curl -L "https://github.com/dr5hn/countries-states-cities-database/releases/late
 gunzip /tmp/countries-data.json.gz
 
 # Generate split structure
-pnpm exec tsx scripts/generate-data.ts /tmp/countries-data.json
+npm exec tsx -- scripts/generate-data.ts /tmp/countries-data.json
 
 # Test with new data
 npm run build
