@@ -1,8 +1,6 @@
 name: Apply native npm migration
 
 on:
-  push:
-    branches: [agent/dependency-deprecation-cleanup]
   pull_request:
     branches: [main]
 
