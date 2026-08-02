@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { LRUCache } from '../../src/cache';
+import { LRUCache } from '../../../../src/countries-browser/cache';
 
 describe('LRUCache', () => {
   let cache: LRUCache<string, string[]>;

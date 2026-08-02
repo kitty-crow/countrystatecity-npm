@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { createSpinner, isTTY, stderr } from '../../src/lib/output.ts';
-import type { GlobalFlags } from '../../src/lib/output.ts';
+import { createSpinner, isTTY, stderr } from '../../../../src/cli/lib/output.ts';
+import type { GlobalFlags } from '../../../../src/cli/lib/output.ts';
 
 const quietFlags: GlobalFlags = { json: false, quiet: true, noFooter: false };
 const jsonFlags: GlobalFlags = { json: true, quiet: false, noFooter: false };

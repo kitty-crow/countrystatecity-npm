@@ -4,7 +4,7 @@ import {
   getTimezonesByCountry,
   getTimezoneInfo,
   convertTime
-} from '../../src';
+} from '../../../../src/timezones';
 
 describe('iOS Safari Compatibility', () => {
   describe('Stack overflow prevention', () => {

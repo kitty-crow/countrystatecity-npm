@@ -6,7 +6,7 @@ import {
   convertTime,
   getCurrentTime,
   searchTimezones
-} from '../../src';
+} from '../../../../src/timezones';
 
 describe('Timezone API Integration', () => {
   describe('Complete workflow: Find and convert timezone', () => {

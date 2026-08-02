@@ -5,7 +5,7 @@ import {
   getTranslation,
   getLocales,
   searchByTranslatedName,
-} from '../../src';
+} from '../../../../src/translations';
 
 describe('Translation API Integration', () => {
   describe('Complete workflow: Find country and translate name', () => {

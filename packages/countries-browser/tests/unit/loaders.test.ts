@@ -9,8 +9,8 @@ import {
   getAllCitiesOfCountry,
   getAllCitiesInWorld,
   clearCache,
-} from '../../src/loaders';
-import { configure, resetConfiguration } from '../../src/config';
+} from '../../../../src/countries-browser/loaders';
+import { configure, resetConfiguration } from '../../../../src/countries-browser/config';
 
 function mockFetch(responses: Record<string, unknown>) {
   vi.stubGlobal('fetch', vi.fn().mockImplementation((url: string) => {

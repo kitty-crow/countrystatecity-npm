@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getPhonecodes, getPhonecodeByCountry, getCountriesByDialCode } from '../../src/index.js';
+import { getPhonecodes, getPhonecodeByCountry, getCountriesByDialCode } from '../../../../src/phonecodes/index.js';
 
 describe('Phonecodes Integration', () => {
   it('should cover all 250 countries', async () => {

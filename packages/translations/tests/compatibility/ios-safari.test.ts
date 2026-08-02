@@ -5,7 +5,7 @@ import {
   getTranslation,
   getLocales,
   searchByTranslatedName,
-} from '../../src';
+} from '../../../../src/translations';
 
 /**
  * iOS/Safari Compatibility Tests

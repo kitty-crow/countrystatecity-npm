@@ -5,27 +5,43 @@
     "build": {
       "outputs": [
         "dist/**"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/src/**"
       ]
     },
     "dev": {
       "persistent": true,
-      "cache": false
+      "cache": false,
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/src/**"
+      ]
     },
     "test": {
       "dependsOn": [
         "build"
       ],
-      "cache": false
+      "cache": false,
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/src/**"
+      ]
     },
     "typecheck": {
       "dependsOn": [
         "^build"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/src/**"
       ]
     },
     "lint": {},
     "generate-data": {
       "outputs": [
-        "data/**"
+        "$TURBO_ROOT$/src/*/data/**"
       ],
       "cache": false
     },

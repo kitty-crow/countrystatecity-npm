@@ -1,14 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('../../src/lib/config.ts', () => ({ getApiKey: vi.fn() }));
-vi.mock('../../src/lib/api.ts', () => ({ validateKey: vi.fn() }));
-vi.mock('../../src/lib/browser.ts', () => ({ openUrl: vi.fn() }));
+vi.mock('../../../../src/cli/lib/config.ts', () => ({ getApiKey: vi.fn() }));
+vi.mock('../../../../src/cli/lib/api.ts', () => ({ validateKey: vi.fn() }));
+vi.mock('../../../../src/cli/lib/browser.ts', () => ({ openUrl: vi.fn() }));
 
 import { Command } from 'commander';
-import { registerUpgradeCommand } from '../../src/commands/upgrade.ts';
-import { validateKey } from '../../src/lib/api.ts';
-import { openUrl } from '../../src/lib/browser.ts';
-import { getApiKey } from '../../src/lib/config.ts';
+import { registerUpgradeCommand } from '../../../../src/cli/commands/upgrade.ts';
+import { validateKey } from '../../../../src/cli/lib/api.ts';
+import { openUrl } from '../../../../src/cli/lib/browser.ts';
+import { getApiKey } from '../../../../src/cli/lib/config.ts';
 
 describe('upgrade command', () => {
   let program: Command;

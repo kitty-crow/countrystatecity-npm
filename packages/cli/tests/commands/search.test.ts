@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
-vi.mock('../../src/lib/api.ts', () => ({
+vi.mock('../../../../src/cli/lib/api.ts', () => ({
   get: vi.fn(),
 }));
 
-vi.mock('../../src/lib/config.ts', () => ({
+vi.mock('../../../../src/cli/lib/config.ts', () => ({
   getApiKey: vi.fn(() => 'test-key'),
   getApiBase: vi.fn(() => 'https://api.countrystatecity.in/v1'),
 }));
@@ -12,8 +12,8 @@ vi.mock('../../src/lib/config.ts', () => ({
 
 
 
-vi.mock('../../src/lib/output.ts', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../src/lib/output.ts')>();
+vi.mock('../../../../src/cli/lib/output.ts', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../../../../src/cli/lib/output.ts')>();
   return {
     ...actual,
     isTTY: vi.fn(() => false),
@@ -23,8 +23,8 @@ vi.mock('../../src/lib/output.ts', async (importOriginal) => {
 });
 
 import { Command } from 'commander';
-import { registerSearchCommands } from '../../src/commands/search.ts';
-import { get } from '../../src/lib/api.ts';
+import { registerSearchCommands } from '../../../../src/cli/commands/search.ts';
+import { get } from '../../../../src/cli/lib/api.ts';
 
 const mockCountries = [
   { id: 101, name: 'India', iso2: 'IN', iso3: 'IND', capital: 'New Delhi', phonecode: '91', currency: 'INR' },

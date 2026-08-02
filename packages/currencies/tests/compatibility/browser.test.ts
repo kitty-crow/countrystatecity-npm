@@ -6,7 +6,7 @@ import {
   getCurrenciesByCountry,
   getCurrencyByCode,
   searchCurrencies,
-} from '../../src/index.js';
+} from '../../../../src/currencies/index.js';
 
 describe('Browser / Bundle Compatibility', () => {
   describe('stack overflow prevention', () => {
@@ -26,7 +26,7 @@ describe('Browser / Bundle Compatibility', () => {
 
   describe('bundle size', () => {
     it('currencies.json data file should be under 100KB', () => {
-      const filePath = resolve('src/data/currencies.json');
+      const filePath = resolve('../../src/currencies/data/currencies.json');
       const { size } = statSync(filePath);
       expect(size).toBeLessThan(100 * 1024);
     });

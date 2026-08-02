@@ -118,7 +118,7 @@ Use Vitest for all tests:
 
 ```typescript
 import { describe, it, expect } from 'vitest';
-import { getCountries } from '../../src/loaders';
+import { getCountries } from '../../src/timezones/loaders';
 
 describe('getCountries', () => {
   it('should return array of countries', async () => {
@@ -181,7 +181,7 @@ To add new functionality to the package:
 
 2. **Export from Index**
    ```typescript
-   // src/index.ts
+   // src/timezones/index.ts
    export { yourNewFunction } from './your-feature';
    ```
 

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { NetworkError, TimeoutError } from '../../src/errors';
+import { NetworkError, TimeoutError } from '../../../../src/countries-browser/errors';
 
 describe('NetworkError', () => {
   it('stores url and statusCode', () => {

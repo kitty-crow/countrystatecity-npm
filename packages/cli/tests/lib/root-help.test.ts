@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { isRootHelpRequested, shouldShowBrandedHelp } from '../../src/lib/root-help.ts';
+import { isRootHelpRequested, shouldShowBrandedHelp } from '../../../../src/cli/lib/root-help.ts';
 
 describe('root help helpers', () => {
   it('treats an empty invocation as root help', () => {

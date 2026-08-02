@@ -11,8 +11,8 @@ const node = process.versions['bun'] ? [process.execPath] : [process.execPath, '
 
 const job = (name: string, arg = src): Job => ({
   name,
-  cwd: join(root, 'packages', name),
-  cmd: [...node, 'scripts/generate-data.ts', arg],
+  cwd: root,
+  cmd: [...node, join('src', name, 'scripts', 'generate-data.ts'), arg],
 });
 
 const main = async (): Promise<void> => {
@@ -27,7 +27,7 @@ const main = async (): Promise<void> => {
     job('translations'),
     job('phonecodes'),
   ]);
-  const countryData = join(root, 'packages', 'countries', 'src', 'data');
+  const countryData = join(root, 'src', 'countries', 'data');
   if (!exists(countryData)) throw new Error('countries data was not generated');
   console.log('\n── Batch 2: browser data ──');
   await run(job('countries-browser', countryData));

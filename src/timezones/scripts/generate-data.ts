@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { fail, sourceArg } from '../../../scripts/lib/args.ts';
 import { ensureDir, kb, writeJson } from '../../../scripts/lib/fs.ts';
 import { readSource } from '../../../scripts/lib/source.ts';
-import type { ITimezone, ITimezoneAbbreviation } from '../src/types.ts';
+import type { ITimezone, ITimezoneAbbreviation } from '../types.ts';
 
 const here = dirname(fileURLToPath(import.meta.url));
 
@@ -72,7 +72,7 @@ export const generate = (src: string, data: string): void => {
 };
 
 try {
-  generate(sourceArg('tsx scripts/generate-data.ts <source-file-path> [output-dir]'), process.argv[3] ?? join(here, '..', 'src', 'data'));
+  generate(sourceArg('tsx scripts/generate-data.ts <source-file-path> [output-dir]'), process.argv[3] ?? join(here, '..', 'data'));
 } catch (err) {
   fail(err);
 }

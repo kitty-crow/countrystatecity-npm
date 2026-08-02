@@ -8,7 +8,7 @@ import {
   getDialCode,
   getPhonecode,
   formatWithDialCode,
-} from '../../src/index.js';
+} from '../../../../src/phonecodes/index.js';
 
 describe('Phonecode Loaders', () => {
   describe('getPhonecodes', () => {

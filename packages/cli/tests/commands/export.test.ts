@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('../../src/lib/browser.ts', () => ({ openUrl: vi.fn() }));
+vi.mock('../../../../src/cli/lib/browser.ts', () => ({ openUrl: vi.fn() }));
 
 import { Command } from 'commander';
-import { registerExportCommand } from '../../src/commands/export.ts';
-import { openUrl } from '../../src/lib/browser.ts';
+import { registerExportCommand } from '../../../../src/cli/commands/export.ts';
+import { openUrl } from '../../../../src/cli/lib/browser.ts';
 
 describe('export command', () => {
   beforeEach(() => vi.clearAllMocks());

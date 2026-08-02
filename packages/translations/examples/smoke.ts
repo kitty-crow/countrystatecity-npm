@@ -4,7 +4,7 @@ import {
   getTranslation,
   getTranslationOrFallback,
   searchByTranslatedName,
-} from '../src/index.ts';
+} from '../../../src/translations/index.ts';
 
 console.log(await getTranslation('DE', 'fr'));
 console.log(await getLocales());

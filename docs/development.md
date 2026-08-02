@@ -46,8 +46,10 @@ npm run generate-data
 npm run check
 ```
 
-The fetcher uses the platform Fetch API, validates the downloaded database, then writes package data. The scheduled workflow runs the same pipeline and opens a pull request only when generated data changes.
+The fetcher uses the platform Fetch API, validates the downloaded database, then writes generated datasets below `src/<package>/data`. The scheduled workflow runs the same pipeline and opens a pull request only when generated data changes.
 
 ## Adding code
+
+Place maintained implementation in `src/<package>/`; keep `packages/<package>/` limited to its manifest, build configuration, tests and package documentation.
 
 Keep public names unchanged unless a deliberately breaking release has been approved. Prefer small modules, explicit types, native platform APIs and guard clauses. Use short local names where their meaning remains clear. Do not commit generated JavaScript.

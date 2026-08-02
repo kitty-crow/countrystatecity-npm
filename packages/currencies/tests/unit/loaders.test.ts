@@ -7,7 +7,7 @@ import {
   getCurrencySymbolNative,
   isValidCurrencyCode,
   searchCurrencies,
-} from '../../src/index.js';
+} from '../../../../src/currencies/index.js';
 
 describe('Currency Loaders', () => {
   describe('getCurrencies', () => {
