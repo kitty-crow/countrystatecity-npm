@@ -90,12 +90,16 @@ jobs:
           test ! -e .github/workflows/apply-native-npm-migration.yml
           bun run scripts/check-deprecations.ts
 
-      - name: Commit migration
+      - name: Export validated patch
         run: |
-          rm -rf node_modules
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          rm -rf node_modules .github/__pycache__
           git add -A
           git diff --cached --check
-          git commit -m 'refactor: use npm workspaces and native APIs'
-          git push origin HEAD:agent/dependency-deprecation-cleanup
+          git diff --cached --binary --full-index > /tmp/native-npm-migration.patch
+          test -s /tmp/native-npm-migration.patch
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: native-npm-migration
+          path: /tmp/native-npm-migration.patch
+          retention-days: 1
