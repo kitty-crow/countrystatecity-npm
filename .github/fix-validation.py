@@ -31,19 +31,19 @@ if old not in value:
 config.write_text(value.replace(old, new), encoding='utf-8')
 
 (root / 'scripts/runtime-smoke.cts').write_text("""#!/usr/bin/env node
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+const fs: typeof import('node:fs') = require('node:fs');
+const os: typeof import('node:os') = require('node:os');
+const path: typeof import('node:path') = require('node:path');
 
-const dir = mkdtempSync(join(tmpdir(), 'csc-ts-node-'));
-const file = join(dir, 'value.json');
+const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'csc-ts-node-'));
+const file = path.join(dir, 'value.json');
 try {
-  writeFileSync(file, JSON.stringify({ ok: true }), 'utf8');
-  const value = JSON.parse(readFileSync(file, 'utf8')) as { ok?: unknown };
+  fs.writeFileSync(file, JSON.stringify({ ok: true }), 'utf8');
+  const value = JSON.parse(fs.readFileSync(file, 'utf8')) as { ok?: unknown };
   if (value.ok !== true) throw new Error('ts-node runtime smoke test failed');
   console.log(`✓ Repository TypeScript runs through ts-node on ${process.version}`);
 } finally {
-  rmSync(dir, { force: true, recursive: true });
+  fs.rmSync(dir, { force: true, recursive: true });
 }
 """, encoding='utf-8')
 
