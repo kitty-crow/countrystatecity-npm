@@ -1,4 +1,4 @@
-name: Toolchain audit
+name: Validate toolchain cleanup
 
 on:
   push:
@@ -9,8 +9,52 @@ on:
 permissions:
   contents: read
 
+env:
+  TURBO_TELEMETRY_DISABLED: '1'
+
 jobs:
-  audit:
+  prepare:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.12.0
+      - name: Use repository npm version
+        run: npm install --global npm@11.16.0
+      - name: Create candidate dependency tree
+        run: |
+          set -Eeuo pipefail
+          npm version 2.1.1 --workspaces --include-workspace-root --no-git-tag-version
+          npm pkg set \
+            dependencies.@inquirer/search=3.2.2 \
+            dependencies.@inquirer/select=4.4.2 \
+            devDependencies.eslint=9.39.2 \
+            --workspace=@countrystatecity/cli
+          rm -f .npmrc
+          python <<'PY'
+          from pathlib import Path
+          path = Path('tsup.config.base.ts')
+          text = path.read_text()
+          old = '  treeshake: true,\n'
+          if text.count(old) != 1:
+              raise SystemExit('unexpected treeshake configuration')
+          path.write_text(text.replace(old, ''))
+          PY
+          set -o pipefail
+          npm install --ignore-scripts 2>&1 | tee install.log
+          ! grep -E 'npm warn|EBADENGINE|DeprecationWarning' install.log
+          npm audit --audit-level=low
+          tar -czf candidate.tar.gz \
+            package.json package-lock.json tsup.config.base.ts packages/*/package.json
+      - uses: actions/upload-artifact@v6
+        with:
+          name: toolchain-candidate
+          path: candidate.tar.gz
+          retention-days: 1
+
+  verify:
+    needs: prepare
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
@@ -21,27 +65,24 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node }}
-      - name: Inspect compatible CLI releases
+      - name: Use repository npm version
+        run: npm install --global npm@11.16.0
+      - uses: actions/download-artifact@v7
+        with:
+          name: toolchain-candidate
+      - name: Apply candidate
         run: |
-          for spec in \
-            eslint@9.39.2 \
-            @inquirer/search@3 \
-            @inquirer/search@2 \
-            @inquirer/select@4 \
-            @inquirer/select@3; do
-            printf '\n=== %s ===\n' "$spec"
-            npm view "$spec" version engines --json
-          done
-      - name: Install and capture warnings
+          rm -f .npmrc
+          tar -xzf candidate.tar.gz
+      - name: Verify warning-free install
         run: |
           set -o pipefail
           npm ci --ignore-scripts 2>&1 | tee install.log
-      - name: Resolve warning paths
-        if: always()
-        run: npm explain eslint @eslint/core @inquirer/core @inquirer/select glob || true
+          ! grep -E 'npm warn|EBADENGINE|DeprecationWarning' install.log
       - name: Audit dependencies
-        if: always()
-        run: npm audit --json || true
-      - name: Validate repository
-        if: always()
-        run: npm run check
+        run: npm audit --audit-level=low
+      - name: Verify repository
+        run: |
+          set -o pipefail
+          npm run check 2>&1 | tee check.log
+          ! grep -E 'Entry module .* using named and default exports together|DeprecationWarning' check.log
