@@ -15,7 +15,7 @@ const browser = (): Error => new Error(
 export const json = async <T>(file: string): Promise<T> => {
   let first: unknown;
   try {
-    const mod = await import(/* @vite-ignore */ file, { assert: { type: 'json' } }) as Json<T>;
+    const mod = await import(/* @vite-ignore */ file, { with: { type: 'json' } }) as Json<T>;
     return mod.default;
   } catch (err) {
     first = err;
