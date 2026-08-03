@@ -1,4 +1,4 @@
-name: Audit isolated countries package
+name: Audit standalone countries package
 
 on:
   push:
@@ -19,15 +19,21 @@ jobs:
           node-version: 22.12.0
       - name: Match reported npm version
         run: npm install --global npm@11.14.1
-      - name: Install isolated package
-        working-directory: packages/countries
-        run: npm install --ignore-scripts --workspaces=false
-      - name: Explain isolated dependency tree
-        working-directory: packages/countries
+      - name: Create standalone package manifest
+        run: |
+          mkdir -p /tmp/countries
+          cp packages/countries/package.json /tmp/countries/package.json
+      - name: Install standalone dependency tree
+        working-directory: /tmp/countries
+        run: npm install --ignore-scripts
+      - name: Explain standalone dependency tree
+        working-directory: /tmp/countries
         run: npm explain brace-expansion diff esbuild js-yaml postcss || true
-      - name: Audit isolated package
-        working-directory: packages/countries
+      - name: Audit standalone dependency tree
+        working-directory: /tmp/countries
         run: npm audit --json || true
-      - name: Build isolated package
+      - name: Build repository package
         working-directory: packages/countries
-        run: npm run build
+        run: |
+          npm install --ignore-scripts --workspaces=false --no-audit
+          npm run build
