@@ -16,6 +16,23 @@ export const path = async (): Promise<typeof import('node:path')> => {
   return import(/* webpackIgnore: true */ 'node:path');
 };
 
+const local = async (p: typeof import('node:path')): Promise<string | undefined> => {
+  const io = await fs();
+  const roots = [
+    process.cwd(),
+    p.join(process.cwd(), 'packages', 'countries'),
+  ];
+  for (const root of roots) {
+    try {
+      const pkg = JSON.parse(io.readFileSync(p.join(root, 'package.json'), 'utf8')) as { name?: string };
+      if (pkg.name === '@countrystatecity/countries') return p.join(root, 'dist');
+    } catch {
+      continue;
+    }
+  }
+  return undefined;
+};
+
 export const base = async (): Promise<string> => {
   if (typeof __dirname !== 'undefined') return __dirname;
   guard();
@@ -24,5 +41,11 @@ export const base = async (): Promise<string> => {
     import(/* webpackIgnore: true */ 'node:module'),
   ]);
   const req = m.createRequire(p.join(process.cwd(), 'package.json'));
-  return p.dirname(req.resolve('@countrystatecity/countries'));
+  try {
+    return p.dirname(req.resolve('@countrystatecity/countries'));
+  } catch {
+    const dir = await local(p);
+    if (dir) return dir;
+    throw new Error('Unable to resolve @countrystatecity/countries data directory');
+  }
 };
