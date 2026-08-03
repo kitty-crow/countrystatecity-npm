@@ -1,10 +1,8 @@
-name: Validate isolated countries install
+name: Prepare places 2.1.1
 
 on:
   push:
     branches: [agent/toolchain-cleanup]
-  pull_request:
-    branches: [main]
 
 permissions:
   contents: read
@@ -13,24 +11,47 @@ env:
   TURBO_TELEMETRY_DISABLED: '1'
 
 jobs:
-  countries:
+  prepare:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
-          node-version: 22.12.0
-      - name: Match reported npm version
-        run: npm install --global npm@11.14.1
-      - name: Install only the countries package
-        working-directory: packages/countries
+          node-version: 24
+      - name: Use repository npm version
+        run: npm install --global npm@11.16.0
+      - name: Prepare maintenance release
+        run: |
+          set -Eeuo pipefail
+          npm version 2.1.1 --workspaces --include-workspace-root --no-git-tag-version
+          rm .npmrc
+          python <<'PY'
+          from pathlib import Path
+
+          path = Path('tsup.config.base.ts')
+          text = path.read_text()
+          old = '  treeshake: true,\n'
+          if text.count(old) != 1:
+              raise SystemExit('unexpected treeshake configuration')
+          path.write_text(text.replace(old, ''))
+          PY
+      - name: Verify clean install and audit
         run: |
           set -o pipefail
-          npm install --ignore-scripts --workspaces=false 2>&1 | tee install.log
+          npm ci --ignore-scripts 2>&1 | tee install.log
           ! grep -E 'npm warn|EBADENGINE|DeprecationWarning' install.log
-      - name: Validate countries package
-        working-directory: packages/countries
+          npm audit --audit-level=low
+      - name: Verify complete repository
         run: |
-          npm run typecheck
-          npm run build
-          npm run test
+          set -o pipefail
+          npm run check 2>&1 | tee check.log
+          ! grep -E 'Entry module .* using named and default exports together|DeprecationWarning' check.log
+      - name: Save validated release files
+        run: |
+          tar -czf places-2.1.1.tar.gz \
+            package.json package-lock.json tsup.config.base.ts packages/*/package.json
+      - uses: actions/upload-artifact@v6
+        with:
+          name: places-2.1.1
+          path: places-2.1.1.tar.gz
+          retention-days: 1
