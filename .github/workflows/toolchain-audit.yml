@@ -3,6 +3,8 @@ name: Toolchain audit
 on:
   push:
     branches: [agent/toolchain-cleanup]
+  pull_request:
+    branches: [main]
 
 permissions:
   contents: read
@@ -25,7 +27,7 @@ jobs:
           npm ci --ignore-scripts 2>&1 | tee install.log
       - name: Resolve warning paths
         if: always()
-        run: npm explain eslint @eslint/core @inquirer/core glob || true
+        run: npm explain eslint @eslint/core @inquirer/core @inquirer/select glob || true
       - name: Audit dependencies
         if: always()
         run: npm audit --json || true
