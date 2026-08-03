@@ -3,6 +3,8 @@ name: Prepare places 2.1.1
 on:
   push:
     branches: [agent/toolchain-cleanup]
+  pull_request:
+    branches: [main]
 
 permissions:
   contents: read
