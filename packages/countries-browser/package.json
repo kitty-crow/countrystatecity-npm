@@ -1,6 +1,6 @@
 {
   "name": "@countrystatecity/countries-browser",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "Browser-native countries, states, and cities data with jsDelivr CDN and lazy loading",
   "keywords": [
     "country-state-city",

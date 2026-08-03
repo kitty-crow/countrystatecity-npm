@@ -12,33 +12,32 @@ const browser = (): Error => new Error(
   + 'See documentation at: https://github.com/dr5hn/countrystatecity/tree/main/packages/countries#readme',
 );
 
-export const json = async <T>(file: string): Promise<T> => {
-  let first: unknown;
-  try {
-    const mod = await import(/* @vite-ignore */ file, { assert: { type: 'json' } }) as Json<T>;
-    return mod.default;
-  } catch (err) {
-    first = err;
-  }
-  if (!isNode()) throw browser();
-  try {
-    const [io, p, dir] = await Promise.all([fs(), path(), base()]);
-    const files = [
-      p.join(dir, file),
-      p.join(dir, '..', file),
-      p.join(process.cwd(), 'node_modules', '@countrystatecity', 'countries', 'dist', file),
-    ];
-    for (const candidate of files) {
-      try {
-        return JSON.parse(io.readFileSync(candidate, 'utf8')) as T;
-      } catch {
-        continue;
-      }
+const nodeJson = async <T>(file: string): Promise<T> => {
+  const [io, p, dir] = await Promise.all([fs(), path(), base()]);
+  const files = [
+    p.join(dir, file),
+    p.join(dir, '..', file),
+    p.join(process.cwd(), 'node_modules', '@countrystatecity', 'countries', 'dist', file),
+  ];
+  let last: unknown;
+  for (const candidate of files) {
+    try {
+      return JSON.parse(io.readFileSync(candidate, 'utf8')) as T;
+    } catch (err) {
+      last = err;
     }
-  } catch {
-    // Preserve the original import error, matching the pre-refactor loader.
   }
-  throw first;
+  throw last;
+};
+
+export const json = async <T>(file: string): Promise<T> => {
+  if (isNode()) return nodeJson<T>(file);
+  try {
+    const mod = await import(/* @vite-ignore */ file, { with: { type: 'json' } }) as Json<T>;
+    return mod.default;
+  } catch {
+    throw browser();
+  }
 };
 
 let countries: Map<string, string> | undefined;

@@ -8,21 +8,44 @@ const guard = (): void => {
 
 export const fs = async (): Promise<typeof import('node:fs')> => {
   guard();
-  return import(/* webpackIgnore: true */ 'fs');
+  return import(/* webpackIgnore: true */ 'node:fs');
 };
 
 export const path = async (): Promise<typeof import('node:path')> => {
   guard();
-  return import(/* webpackIgnore: true */ 'path');
+  return import(/* webpackIgnore: true */ 'node:path');
 };
 
-export const url = async (): Promise<typeof import('node:url')> => {
-  guard();
-  return import(/* webpackIgnore: true */ 'url');
+const local = async (p: typeof import('node:path')): Promise<string | undefined> => {
+  const io = await fs();
+  const roots = [
+    process.cwd(),
+    p.join(process.cwd(), 'packages', 'countries'),
+  ];
+  for (const root of roots) {
+    try {
+      const pkg = JSON.parse(io.readFileSync(p.join(root, 'package.json'), 'utf8')) as { name?: string };
+      if (pkg.name === '@countrystatecity/countries') return p.join(root, 'dist');
+    } catch {
+      continue;
+    }
+  }
+  return undefined;
 };
 
 export const base = async (): Promise<string> => {
   if (typeof __dirname !== 'undefined') return __dirname;
-  const [p, u] = await Promise.all([path(), url()]);
-  return p.dirname(u.fileURLToPath(import.meta.url));
+  guard();
+  const [p, m] = await Promise.all([
+    path(),
+    import(/* webpackIgnore: true */ 'node:module'),
+  ]);
+  const req = m.createRequire(p.join(process.cwd(), 'package.json'));
+  try {
+    return p.dirname(req.resolve('@countrystatecity/countries'));
+  } catch {
+    const dir = await local(p);
+    if (dir) return dir;
+    throw new Error('Unable to resolve @countrystatecity/countries data directory');
+  }
 };
