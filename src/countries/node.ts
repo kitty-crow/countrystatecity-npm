@@ -8,21 +8,22 @@ const guard = (): void => {
 
 export const fs = async (): Promise<typeof import('node:fs')> => {
   guard();
-  return import(/* webpackIgnore: true */ 'fs');
+  return import(/* webpackIgnore: true */ 'node:fs');
 };
 
 export const path = async (): Promise<typeof import('node:path')> => {
   guard();
-  return import(/* webpackIgnore: true */ 'path');
+  return import(/* webpackIgnore: true */ 'node:path');
 };
 
-export const url = async (): Promise<typeof import('node:url')> => {
+const mod = async (): Promise<typeof import('node:module')> => {
   guard();
-  return import(/* webpackIgnore: true */ 'url');
+  return import(/* webpackIgnore: true */ 'node:module');
 };
 
 export const base = async (): Promise<string> => {
   if (typeof __dirname !== 'undefined') return __dirname;
-  const [p, u] = await Promise.all([path(), url()]);
-  return p.dirname(u.fileURLToPath(import.meta.url));
+  const [p, m] = await Promise.all([path(), mod()]);
+  const req = m.createRequire(p.join(process.cwd(), 'package.json'));
+  return p.dirname(req.resolve('@countrystatecity/countries'));
 };
