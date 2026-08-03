@@ -1,6 +1,6 @@
 {
   "name": "@countrystatecity/phonecodes",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Country phone/dial codes with ISO2 mapping, search, and formatting utilities",
   "keywords": [
     "country-state-city",
