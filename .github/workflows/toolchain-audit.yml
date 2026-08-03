@@ -21,6 +21,18 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node }}
+      - name: Inspect candidate engine ranges
+        run: |
+          for spec in \
+            eslint@9.39.2 \
+            eslint@10.7.0 \
+            @inquirer/search@4.1.6 \
+            @inquirer/search@4.2.0 \
+            @inquirer/select@5.1.0 \
+            @inquirer/select@5.2.0; do
+            printf '\n=== %s ===\n' "$spec"
+            npm view "$spec" engines --json
+          done
       - name: Install and capture warnings
         run: |
           set -o pipefail
