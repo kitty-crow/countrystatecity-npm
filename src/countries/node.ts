@@ -16,14 +16,13 @@ export const path = async (): Promise<typeof import('node:path')> => {
   return import(/* webpackIgnore: true */ 'node:path');
 };
 
-const mod = async (): Promise<typeof import('node:module')> => {
-  guard();
-  return import(/* webpackIgnore: true */ 'node:module');
-};
-
 export const base = async (): Promise<string> => {
   if (typeof __dirname !== 'undefined') return __dirname;
-  const [p, m] = await Promise.all([path(), mod()]);
+  guard();
+  const [p, m] = await Promise.all([
+    path(),
+    import(/* webpackIgnore: true */ 'node:module'),
+  ]);
   const req = m.createRequire(p.join(process.cwd(), 'package.json'));
   return p.dirname(req.resolve('@countrystatecity/countries'));
 };
