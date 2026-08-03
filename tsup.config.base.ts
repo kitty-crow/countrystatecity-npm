@@ -8,7 +8,6 @@ export const baseConfig: Options = {
   sourcemap: true,
   clean: true,
   splitting: false,
-  treeshake: true,
 };
 
 export const copyDir = (src: string, dest: string): void => {
