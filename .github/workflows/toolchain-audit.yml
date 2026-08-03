@@ -1,4 +1,4 @@
-name: Validate countries workspace install
+name: Validate isolated countries install
 
 on:
   push:
@@ -22,17 +22,15 @@ jobs:
           node-version: 22.12.0
       - name: Match reported npm version
         run: npm install --global npm@11.14.1
-      - name: Remove obsolete npm configuration
-        run: rm .npmrc
-      - name: Install only the countries workspace
+      - name: Install only the countries package
+        working-directory: packages/countries
         run: |
           set -o pipefail
-          npm ci --ignore-scripts \
-            --workspace=@countrystatecity/countries \
-            --include-workspace-root=false 2>&1 | tee install.log
+          npm install --ignore-scripts --workspaces=false 2>&1 | tee install.log
           ! grep -E 'npm warn|EBADENGINE|DeprecationWarning' install.log
-      - name: Validate countries workspace
+      - name: Validate countries package
+        working-directory: packages/countries
         run: |
-          npm run typecheck --workspace=@countrystatecity/countries
-          npm run build --workspace=@countrystatecity/countries
-          npm run test --workspace=@countrystatecity/countries
+          npm run typecheck
+          npm run build
+          npm run test
