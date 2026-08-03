@@ -1,28 +1,29 @@
-name: Prepare places 2.1.1
+name: Apply places 2.1.1
 
 on:
   push:
     branches: [agent/toolchain-cleanup]
-  pull_request:
-    branches: [main]
 
 permissions:
-  contents: read
+  contents: write
 
 env:
   TURBO_TELEMETRY_DISABLED: '1'
 
 jobs:
-  prepare:
+  apply:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: agent/toolchain-cleanup
       - uses: actions/setup-node@v6
         with:
           node-version: 24
       - name: Use repository npm version
         run: npm install --global npm@11.16.0
-      - name: Prepare maintenance release
+      - name: Apply maintenance release
         run: |
           set -Eeuo pipefail
           npm version 2.1.1 --workspaces --include-workspace-root --no-git-tag-version
@@ -37,23 +38,21 @@ jobs:
               raise SystemExit('unexpected treeshake configuration')
           path.write_text(text.replace(old, ''))
           PY
-      - name: Verify clean install and audit
+      - name: Verify release
         run: |
           set -o pipefail
           npm ci --ignore-scripts 2>&1 | tee install.log
           ! grep -E 'npm warn|EBADENGINE|DeprecationWarning' install.log
           npm audit --audit-level=low
-      - name: Verify complete repository
-        run: |
-          set -o pipefail
           npm run check 2>&1 | tee check.log
           ! grep -E 'Entry module .* using named and default exports together|DeprecationWarning' check.log
-      - name: Save validated release files
+      - name: Commit release
         run: |
-          tar -czf places-2.1.1.tar.gz \
-            package.json package-lock.json tsup.config.base.ts packages/*/package.json
-      - uses: actions/upload-artifact@v6
-        with:
-          name: places-2.1.1
-          path: places-2.1.1.tar.gz
-          retention-days: 1
+          set -Eeuo pipefail
+          rm .github/workflows/toolchain-audit.yml
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add -A .npmrc .github/workflows/toolchain-audit.yml \
+            package.json package-lock.json tsup.config.base.ts packages
+          git commit -m "build: clean places tooling for 2.1.1"
+          git push origin HEAD:agent/toolchain-cleanup
