@@ -31,16 +31,23 @@ jobs:
       - name: Prepare candidate manifests
         run: |
           set -Eeuo pipefail
-          npm version 2.1.2 --workspaces --include-workspace-root --no-git-tag-version
           python <<'PY'
           import json
           from pathlib import Path
 
           path = Path('packages/countries/package.json')
           data = json.loads(path.read_text())
-          data['overrides'] = {**data.get('overrides', {}), 'esbuild': '0.28.1'}
+          data['allowScripts'] = {
+              **data.get('allowScripts', {}),
+              'esbuild@0.28.1': True,
+          }
+          data['overrides'] = {
+              **data.get('overrides', {}),
+              'esbuild': '0.28.1',
+          }
           path.write_text(json.dumps(data, indent=2) + '\n')
           PY
+          npm version 2.1.2 --workspaces --include-workspace-root --no-git-tag-version
       - name: Verify standalone countries package
         run: |
           set -Eeuo pipefail
@@ -65,7 +72,8 @@ jobs:
         run: |
           set -Eeuo pipefail
           if [ '${{ matrix.node }}' = '24' ]; then
-            npm run check 2>&1 | tee check.log
+            npm run check
+            npm --prefix packages/countries run build 2>&1 | tee check.log
           else
             npm --prefix packages/countries run typecheck 2>&1 | tee check.log
             npm --prefix packages/countries run build 2>&1 | tee -a check.log
@@ -105,16 +113,23 @@ jobs:
       - name: Apply validated release
         run: |
           set -Eeuo pipefail
-          npm version 2.1.2 --workspaces --include-workspace-root --no-git-tag-version
           python <<'PY'
           import json
           from pathlib import Path
 
           path = Path('packages/countries/package.json')
           data = json.loads(path.read_text())
-          data['overrides'] = {**data.get('overrides', {}), 'esbuild': '0.28.1'}
+          data['allowScripts'] = {
+              **data.get('allowScripts', {}),
+              'esbuild@0.28.1': True,
+          }
+          data['overrides'] = {
+              **data.get('overrides', {}),
+              'esbuild': '0.28.1',
+          }
           path.write_text(json.dumps(data, indent=2) + '\n')
           PY
+          npm version 2.1.2 --workspaces --include-workspace-root --no-git-tag-version
           npm install --ignore-scripts
           rm .github/workflows/countries-isolated-audit.yml
       - name: Commit release
