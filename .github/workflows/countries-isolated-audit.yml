@@ -32,7 +32,15 @@ jobs:
         run: |
           set -Eeuo pipefail
           npm version 2.1.2 --workspaces --include-workspace-root --no-git-tag-version
-          npm pkg set overrides.esbuild=0.28.1 --workspace=@countrystatecity/countries
+          python <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path('packages/countries/package.json')
+          data = json.loads(path.read_text())
+          data['overrides'] = {**data.get('overrides', {}), 'esbuild': '0.28.1'}
+          path.write_text(json.dumps(data, indent=2) + '\n')
+          PY
       - name: Verify standalone countries package
         run: |
           set -Eeuo pipefail
@@ -98,7 +106,15 @@ jobs:
         run: |
           set -Eeuo pipefail
           npm version 2.1.2 --workspaces --include-workspace-root --no-git-tag-version
-          npm pkg set overrides.esbuild=0.28.1 --workspace=@countrystatecity/countries
+          python <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path('packages/countries/package.json')
+          data = json.loads(path.read_text())
+          data['overrides'] = {**data.get('overrides', {}), 'esbuild': '0.28.1'}
+          path.write_text(json.dumps(data, indent=2) + '\n')
+          PY
           npm install --ignore-scripts
           rm .github/workflows/countries-isolated-audit.yml
       - name: Commit release
